@@ -14,17 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    // return redirect('/admin');
-    // return view('welcome');
-    // dd(123);
-    return view('admin');
+    return redirect('/admin');
 });
-// Route::get('/', function () {
-//     // return view('/admin/login', 'admin');
-//     return redirect('/admin');
-// });
 
 // 后端页面
 Route::view('/admin', 'admin');
 
-Route::get('/{any}', 'SpaController@index')->where('any', '.*');
+// Route::get('/{any}', 'SpaController@index')->where('any', '.*');

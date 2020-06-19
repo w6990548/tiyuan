@@ -14,16 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+
+Route::prefix('admin')
+    ->namespace('Api\Admin')
+    ->group(function() {
+        // 登录
+        Route::get('login', 'LoginController@login')->name('login');
+        // 图片验证码
+        Route::post('captchas', 'CaptchasController@getCaptchas')->name('captchas.getCaptchas');
+        // 登录后可以访问的接口
+        Route::middleware('auth:api')->group(function () {
+            // 获取用户信息
+            Route::get('user', 'LoginController@user');
+            // 退出登录
+            Route::post('logout', 'LoginController@logout');
+        });
 });
-
-
-Route::prefix('v1')->name('api.v1.')->group(function() {
-    Route::get('version', function() {
-        return 'this is version v1';
-    })->name('version');
-});
-
-// Route::get('/users', 'SpaController@index');
-// Route::post('/users', 'SpaController@index');

@@ -1,14 +1,20 @@
-import hello from '../components/ExampleComponent.vue';
-import Login from '../components/login';
+import Home from'../components/home';
+import login from '../components/login.vue';
+import welcome from "../components/welcome.vue";
+import ErrorPage from "../components/404.vue";
 
 const routes = [
-	// {path: '/login', component: Login, name: 'Login'},
+	{ path: '/', component: login, name: 'login' },
 	{
 		path: '/',
-		component: hello,
+		component: Home,
 		children: [
-			{path: '/login', component: hello, name: 'SettlementPlatfroms'},
+			{path: 'welcome', component: welcome, name: 'welcome'},
 		]
 	},
+	{ path: '/welcome', name: welcome, component: welcome },
+	{ path: '/404', name: '404', component: ErrorPage },
+	{ path: '*', redirect: '/404' },
+	{ path: '/', redirect: '/login' },
 ]
 export default routes
