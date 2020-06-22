@@ -54,7 +54,7 @@ function handlerError(error) {
 		if (error.response && error.response.code) {
 			switch (error.response.code) {
 				case 10003:
-					Message.error('您的登录信息已失效, 请先登录');
+					Message.error('您的登录信息已失效，请重新登录');
 					router.push('/');
 					break;
 				default:

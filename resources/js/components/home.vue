@@ -1,6 +1,6 @@
 <template>
 	<el-container>
-		<el-header>
+		<el-header class="fl-el-header">
 			<el-dropdown @command="handleSelect">
 				<span class="el-dropdown-link">
 					一个人的江湖
@@ -88,7 +88,7 @@
 		},
 		created() {
 			api.get('/api/admin/user').then(data => {
-				if (data.code === 200) {
+				if (data.code === 0) {
 					console.log(data);
 					this.$message.success('获取用户信息成功');
 				}
@@ -98,13 +98,13 @@
 </script>
 
 <style>
-	.el-header, .el-footer {
+	.fl-el-header, .el-footer {
 		background-color: rgb(84, 92, 100);
 		font-size: 14px;
 		color: rgb(255, 255, 255);
 		line-height: 60px;
 	}
-	.el-header {
+	.fl-el-header {
 		text-align: right;
 	}
 	.el-footer {
@@ -126,6 +126,7 @@
 		color: #333;
 		text-align: center;
 		line-height: 160px;
+		padding: 30px;
 	}
 
 	.el-menu {

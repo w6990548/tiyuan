@@ -10,6 +10,10 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
+// component函数提交组件，第一个参数为组件的名称，第二个参数是一个注册组件的对象
+import page from './components/page'
+Vue.component('page', page)
+
 import App from './App.vue';
 import routes from './router/index.js';
 import api from '../assets/api';
@@ -22,7 +26,7 @@ const router = new VueRouter({
 
 // 全局挂载 router
 window.router = router;
-// 全局关在 api
+// 全局挂载 api
 window.api = api;
 
 // JWT 用户权限校验，判断 TOKEN 是否在 localStorage 当中
