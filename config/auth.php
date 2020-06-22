@@ -38,19 +38,19 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'admin_users',
         ],
 
         'api' => [
             'driver' => 'jwt',
-            'provider' => 'users',
+            'provider' => 'admin_users',
             'hash' => false,
         ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | User Providers
+    | AdminUser Providers
     |--------------------------------------------------------------------------
     |
     | All authentication drivers have a user provider. This defines how the
@@ -66,9 +66,9 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'admin_users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\AdminUser::class,
         ],
 
         // 'users' => [
