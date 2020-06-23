@@ -23,7 +23,10 @@ class CreatePermissionTables extends Migration
         Schema::create($tableNames['permissions'], function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->string('purview_name');
+            $table->tinyInteger('level')->default(1);
             $table->string('guard_name');
+            $table->integer('pid')->default(0);
             $table->timestamps();
         });
         DB::statement("ALTER TABLE `$tableNames[permissions]` comment '后台权限表'");

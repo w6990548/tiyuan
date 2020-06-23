@@ -8,6 +8,7 @@ Vue.use(VueRouter);
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import '../assets/css/global.css'
 Vue.use(ElementUI);
 
 // component函数提交组件，第一个参数为组件的名称，第二个参数是一个注册组件的对象
@@ -28,6 +29,11 @@ const router = new VueRouter({
 window.router = router;
 // 全局挂载 api
 window.api = api;
+// 解决 ElementUI 导航栏中的 vue-router 在 3.0 版本以上重复点菜单报错问题
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+	return originalPush.call(this, location).catch(err => err)
+}
 
 // JWT 用户权限校验，判断 TOKEN 是否在 localStorage 当中
 router.beforeEach(({name}, from, next) => {

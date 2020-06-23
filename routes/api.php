@@ -32,5 +32,15 @@ Route::prefix('admin')
             Route::get('user', 'LoginController@user');
             // 退出登录
             Route::post('logout', 'LoginController@logout');
+
+            /**
+             * 权限模块
+             */
+            // 获取后台用户列表
+            Route::get('users', 'Auth\UsersController@getUsers');
+            // 获取后台用户角色列表
+            Route::get('roles', 'Auth\RolesController@getRoles');
+            // 获取后台权限列表
+            Route::get('permissions', 'Auth\PermissionsController@getPermissions');
         });
 });

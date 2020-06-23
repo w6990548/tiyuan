@@ -21,19 +21,27 @@ class SeedRolesAndPermissionsData extends Migration
         app(Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
 
         // 先创建权限
-        Permission::create(['name' => 'manage_contents']);
-        Permission::create(['name' => 'manage_users']);
-        Permission::create(['name' => 'manage_settings']);
+        Permission::create(['name' => 'api/admin', 'purview_name' => '权限']);
+        Permission::create(['name' => 'api/admin/users', 'purview_name' => '用户管理']);
+        Permission::create(['name' => 'api/admin/roles', 'purview_name' => '角色管理']);
+        Permission::create(['name' => 'api/admin/permissions', 'purview_name' => '权限管理']);
 
         // 创建站长角色，并赋予权限
         $founder = Role::create(['name' => 'admin']);
-        $founder->givePermissionTo('manage_contents');
-        $founder->givePermissionTo('manage_users');
-        $founder->givePermissionTo('manage_settings');
+        $founder->givePermissionTo('api/admin');
+        $founder->givePermissionTo('api/admin/users');
+        $founder->givePermissionTo('api/admin/roles');
+        $founder->givePermissionTo('api/admin/permissions');
 
         // 创建管理员角色，并赋予权限
         $maintainer = Role::create(['name' => 'fenglei']);
-        $maintainer->givePermissionTo('manage_contents');
+        $maintainer->givePermissionTo('api/admin/roles');
+
+        // 一个一级，三个二级
+        Permission::whereIn('id', [2,3,4])->update([
+            'level' => 2,
+            'pid' => 1,
+        ]);
     }
 
     /**

@@ -16,17 +16,14 @@
 				<el-menu class="el-menu-vertical-demo"
 				         background-color="#545c64"
 				         text-color="#fff"
+						 @select="change"
 				         active-text-color="#ffd04b"
-				         :unique-opened="true">
+				         :unique-opened="true" :default-active="defaultActive">
 					<el-submenu index="1">
-						<template slot="title"><i class="el-icon-message"></i>导航一</template>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-						<el-menu-item index="1-2">选项2</el-menu-item>
-						<el-menu-item index="1-3">选项3</el-menu-item>
-						<el-submenu index="1-4">
-							<template slot="title">选项4</template>
-							<el-menu-item index="1-4-1">选项4-1</el-menu-item>
-						</el-submenu>
+						<template slot="title"><i class="el-icon-message"></i>权限</template>
+						<el-menu-item index="users">用户管理</el-menu-item>
+						<el-menu-item index="roles">角色管理</el-menu-item>
+						<el-menu-item index="permissions">权限管理</el-menu-item>
 					</el-submenu>
 					<el-submenu index="2">
 						<template slot="title"><i class="el-icon-message"></i>导航一</template>
@@ -41,7 +38,7 @@
 				</el-menu>
 			</el-aside>
 			<el-container>
-				<el-main>
+				<el-main class="fl-el-main">
 					<el-col :span="24">
 						<router-view></router-view>
 					</el-col>
@@ -61,10 +58,17 @@
 				address: '上海市普陀区金沙江路 1518 弄'
 			};
 			return {
-				tableData: Array(20).fill(item)
+				defaultActive: '', // 选中展开的菜单项
 			};
 		},
 		methods: {
+			change(key, query){
+				if (key !== this.$route.path) {
+					router.push({path: key, query: query})
+				} else {
+					router.replace({path: '/refresh', query: {name: this.$route.name, query: query}})
+				}
+			},
 			logout() {
 				api.post('/api/admin/logout').then(() => {
 					localStorage.removeItem('token');
@@ -89,10 +93,11 @@
 		created() {
 			api.get('/api/admin/user').then(data => {
 				if (data.code === 0) {
-					console.log(data);
 					this.$message.success('获取用户信息成功');
 				}
-			})
+			});
+			// 刷新页面展开当前页面导航
+			this.defaultActive = this.$route.path.substr(1);
 		}
 	};
 </script>
@@ -122,11 +127,8 @@
 		color: rgb(255, 255, 255);
 	}
 
-	.el-main {
-		color: #333;
-		text-align: center;
-		line-height: 160px;
-		padding: 30px;
+	.fl-el-main {
+		padding: 30px 30px 10px 30px;
 	}
 
 	.el-menu {
@@ -139,6 +141,14 @@
 
 	html, body, #app, .el-container.is-vertical {
 		height: 100%;
+	}
+
+	/* 分页 */
+	.el-pagination.is-background .btn-prev {
+		margin-left: 0px;
+	}
+	.el-pagination.is-background .btn-next {
+		margin-right: 0px;
 	}
 
 </style>

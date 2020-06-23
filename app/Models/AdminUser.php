@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -31,6 +32,17 @@ class AdminUser extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * 为数组 / JSON 序列化准备日期。
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format($this->dateFormat ?: 'Y-m-d H:i:s');
+    }
 
     public function getJWTIdentifier()
     {
