@@ -33,14 +33,20 @@ Route::prefix('admin')
             // 退出登录
             Route::post('logout', 'LoginController@logout');
 
-            /**
-             * 权限模块
-             */
+
             // 获取后台用户列表
             Route::get('users', 'Auth\UsersController@getUsers');
             // 获取后台用户角色列表
             Route::get('roles', 'Auth\RolesController@getRoles');
+
+            /*************************************
+             * 权限管理
+             *************************************/
             // 获取后台权限列表
-            Route::get('permissions', 'Auth\PermissionsController@getPermissions');
+            Route::get('permissions', 'Auth\PermissionsController@index');
+            // 添加权限
+            Route::post('permissions/create', 'Auth\PermissionsController@create');
+            // 删除权限
+            Route::post('permissions/delete', 'Auth\PermissionsController@delete');
         });
 });

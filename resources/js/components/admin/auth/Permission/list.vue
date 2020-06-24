@@ -1,5 +1,8 @@
 <template>
-    <page title="用户管理">
+    <page title="权限管理">
+        <div class="m-b-20">
+            <el-button type="primary" size="small" @click="addPermissions">添加权限</el-button>
+        </div>
         <el-table
                 :data="tableData"
                 style="width: 100%"
@@ -19,7 +22,7 @@
             <el-table-column
                     prop="name"
                     label="url"
-                    width="200">
+                    width="300">
                 <template slot-scope="scope">
                     <el-tag size="medium" type="danger">{{ scope.row.name }}</el-tag>
                 </template>
@@ -39,10 +42,13 @@
                     <el-button
                             size="mini"
                             type="danger"
-                            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                            @click="deletePermissions(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
+        <el-dialog title="添加权限" :visible.sync="isAdd" width="450px" center>
+            <purview-form @cancel="isAdd = false" @save="doAddPermissions" :PermissionsData1="PermissionsData"></purview-form>
+        </el-dialog>
         <el-pagination class="fr m-t-20 p-d-0"
                        background
                        layout="prev, pager, next"
@@ -54,16 +60,20 @@
     </page>
 </template>
 <script>
+    import PurviewForm from './form';
+
     export default {
         name: 'list',
         data(){
             return {
                 tableData: [],
+                PermissionsData: [],
                 total: 0,
                 query: {
                     page: 1,
                     pageSize: 10,
-                }
+                },
+                isAdd: false,
             }
         },
         computed:{
@@ -82,12 +92,35 @@
                 }).then(data => {
                     resolve(data.data.list)
                 })
+            },
+            addPermissions() {
+                this.isAdd = true
+                api.get('/api/admin/permissions').then(data => {
+                    this.PermissionsData = data.data.list;
+                })
+            },
+            doAddPermissions(form) {
+                api.post('/api/admin/permissions/create', form).then(data => {
+                    this.$message.success('添加成功');
+                    this.isAdd = false;
+                    this.getList();
+                })
+            },
+            deletePermissions(index, row) {
+                this.$confirm('确认删除该权限吗?', '提示', {
+                    type: 'warning'
+                }).then(() => {
+                    api.post('/api/admin/permissions/delete', {
+                        id: row.id
+                    }).then(data => {
+                        this.$message.success('删除成功');
+                        this.getList();
+                    })
+                }).catch(() => {
 
+                });
             },
             handleEdit(index, row) {
-                console.log(index, row);
-            },
-            handleDelete(index, row) {
                 console.log(index, row);
             },
             handleClose(){
@@ -99,7 +132,7 @@
 
         },
         components: {
-            // UserForm
+            PurviewForm
         }
     }
 </script>

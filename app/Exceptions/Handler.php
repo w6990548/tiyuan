@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Exceptions\PermissionAlreadyExists;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
@@ -87,6 +88,8 @@ class Handler extends ExceptionHandler
             $response = Result::error(10001, implode('|', $errors));
         } elseif ($exception instanceof AuthenticationException) {
             $response = Result::error(10003, '您尚未登录');
+        } elseif ($exception instanceof PermissionAlreadyExists) {
+            $response = Result::error(10004, '权限已存在');
         } else {
             $response = parent::render($request, $exception);
         }

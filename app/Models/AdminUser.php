@@ -13,7 +13,7 @@ class AdminUser extends Authenticatable implements JWTSubject
     use HasRoles;
     use Notifiable;
 
-    protected $guard_name = 'web';
+    protected $guard_name = 'api';
 
     /**
      * The attributes that are mass assignable.
