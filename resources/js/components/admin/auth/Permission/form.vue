@@ -66,9 +66,8 @@
                 this.$refs[form].validate(valid => {
                     if(valid){
                         this.$emit('save', this.form);
-                        setTimeout(() => {
-                            this.$refs.form.resetFields();
-                        }, 500)
+                        // this.$refs.form.resetFields();
+                        this.$emit('cancel');
                     }
                 })
             }

@@ -23,11 +23,11 @@ Route::prefix('admin')
     ->namespace('Api\Admin')
     ->group(function() {
         // 登录
-        Route::get('login', 'LoginController@login')->name('login');
+        Route::get('login', 'LoginController@login');
         // 图片验证码
-        Route::post('captchas', 'CaptchasController@getCaptchas')->name('captchas.getCaptchas');
+        Route::post('captchas', 'CaptchasController@getCaptchas');
         // 登录后可以访问的接口
-        Route::middleware('auth:api')->group(function () {
+        Route::middleware('auth:api', 'admin')->group(function () {
             // 获取用户信息
             Route::get('user', 'LoginController@user');
             // 退出登录

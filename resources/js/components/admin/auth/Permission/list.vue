@@ -10,6 +10,7 @@
                 border
                 lazy
                 :load="load"
+                ref="table"
                 :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
             <el-table-column
                     prop="purview_name"
@@ -68,6 +69,7 @@
             return {
                 tableData: [],
                 PermissionsData: [],
+                maps: new Map(),
                 total: 0,
                 query: {
                     page: 1,
@@ -87,6 +89,7 @@
                 })
             },
             load(tree, treeNode, resolve) {
+                this.maps.set(tree.id, { tree, treeNode, resolve })
                 api.get('/api/admin/permissions', {
                     pid: tree.id,
                 }).then(data => {
@@ -104,6 +107,9 @@
                     this.$message.success('添加成功');
                     this.isAdd = false;
                     this.getList();
+                    if (form.pid !== 0) {
+                        this.resetTable(form);
+                    }
                 })
             },
             deletePermissions(index, row) {
@@ -115,10 +121,22 @@
                     }).then(data => {
                         this.$message.success('删除成功');
                         this.getList();
+                        if (row.pid !== 0) {
+                            this.resetTable(row);
+                        }
                     })
                 }).catch(() => {
 
                 });
+            },
+            resetTable(form) {
+                // 取出当前操作行的pid
+                const pid = form.pid
+                // 根据 pid 取出对应的节点数据
+                const { tree, treeNode, resolve } = this.maps.get(pid)
+                //将对应节点下的数据清空，从而实现数据的重新加载
+                this.$set(this.$refs.table.store.states.lazyTreeNodeMap, pid, []);
+                this.load( tree, treeNode, resolve )
             },
             handleEdit(index, row) {
                 console.log(index, row);

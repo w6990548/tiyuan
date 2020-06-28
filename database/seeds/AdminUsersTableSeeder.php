@@ -20,12 +20,12 @@ class AdminUsersTableSeeder extends Seeder
         $user->save();
 
         // 初始化用户角色，将1号用户指定为站长
-        $user->assignRole('admin');
+        $user->assignRole('zhanzhang');
 
         // 2号用户指定为管理员
         $user = AdminUser::find(2);
         $user->username = 'fenglei';
         $user->save();
-        $user->assignRole('fenglei');
+        $user->assignRole('guanliyuan');
     }
 }

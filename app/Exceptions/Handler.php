@@ -72,10 +72,10 @@ class Handler extends ExceptionHandler
     /**
      * 渲染api的异常
      * @param \Illuminate\Http\Request $request
-     * @param Exception $exception
+     * @param Throwable $exception
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    private function renderForApi($request, Exception $exception)
+    private function renderForApi($request, Throwable $exception)
     {
         if ($exception instanceof NotFoundHttpException) {
             $response = Result::error(10000, '接口不存在');

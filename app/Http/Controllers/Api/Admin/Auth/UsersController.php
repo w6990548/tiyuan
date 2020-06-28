@@ -12,10 +12,6 @@ class UsersController extends Controller
 {
     public function getUsers(Request $request)
     {
-        // 不是超级管理员 且 没有权限
-        if (!$request->user()->can($request->path())) {
-            throw new NoPermissionException('权限不足 '.$request->path());
-        }
         $adminUsers = AdminUser::paginate($request->pageSize);
         return Result::success([
             'list' => $adminUsers->items(),

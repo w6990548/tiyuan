@@ -12,10 +12,6 @@ class RolesController extends Controller
 {
     public function getRoles(Request $request)
     {
-        // 不是超级管理员 且 没有权限
-        if (!$request->user()->can($request->path())) {
-            throw new NoPermissionException('权限不足 '.$request->path());
-        }
         $roleData = Role::paginate($request->pageSize);
         return Result::success([
             'list' => $roleData->items(),

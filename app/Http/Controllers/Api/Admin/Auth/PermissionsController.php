@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\Admin\Auth;
 
-use App\Exceptions\NoPermissionException;
+use App\Exceptions\BaseResponseException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\PermissionRequest;
 use App\Models\Permission as newPermission;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use App\Result;
 use Illuminate\Http\Request;
@@ -21,11 +22,6 @@ class PermissionsController extends Controller
      */
     public function index(Request $request)
     {
-        // 判断用户是否有操作权限
-        if (!$request->user()->can($request->path())) {
-            throw new NoPermissionException();
-        }
-
         $pid = $request->get('pid', 0);
         $roleData = newPermission::where('pid', $pid)
             ->when($pid === 0, function ($query) {
@@ -53,26 +49,40 @@ class PermissionsController extends Controller
      */
     public function create(PermissionRequest $request)
     {
-        Permission::create([
-            'name' => $request->get('name'),
-            'purview_name' => $request->get('purview_name')
-        ]);
+    	DB::beginTransaction();
+	    try {
+		    if ($request->pid !== 0) {
+			    $parent = Permission::findOrFail($request->pid);
+			    if ($parent->level > 2) {
+				    throw new BaseResponseException('权限最多增加到3级');
+			    }
+		    }
 
-        // 获取用户拥有的角色
-        $roleName = $request->user()->getRoleNames()->first();
-        $roles = Role::findByName($roleName);
-        // 通过角色添加权限
-        $roles->givePermissionTo($request->get('name'));
+	    	// 创建权限
+		    Permission::create([
+			    'name' => $request->get('name'),
+			    'purview_name' => $request->get('purview_name'),
+			    'level' => $request->pid === 0 ? 1 : $parent->level + 1,
+			    'pid' => $request->pid,
+		    ]);
+
+		    // 获取用户拥有的角色
+		    $roleName = $request->user()->getRoleNames()->first();
+		    $roles = Role::findByName($roleName);
+		    // 通过角色添加权限
+		    $roles->givePermissionTo($request->get('name'));
+
+		    DB::commit();
+	    } catch (\Exception $e){
+		    DB::rollBack();
+		    throw $e;
+	    }
+
         return Result::success();
     }
 
     public function delete(Request $request)
     {
-        // 不是超级管理员 且 没有权限
-        if (!$request->user()->can($request->path())) {
-            throw new NoPermissionException('权限不足 '.$request->path());
-        }
-
         $permission = Permission::findById($request->get('id'));
         $roles = Role::get();
         foreach ($roles as $role) {
