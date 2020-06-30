@@ -3,8 +3,8 @@
 namespace App\Exceptions;
 
 use App\Result;
-use Exception;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Exceptions\PermissionAlreadyExists;
@@ -90,7 +90,10 @@ class Handler extends ExceptionHandler
             $response = Result::error(10003, '您尚未登录');
         } elseif ($exception instanceof PermissionAlreadyExists) {
             $response = Result::error(10004, '权限已存在');
-        } else {
+        } elseif ($exception instanceof ModelNotFoundException) {
+	        $message = '数据不存在：'.$exception->getModel().'【'.implode(',', $exception->getIds()).'】';
+	        $response = Result::error(10010, $message);
+        }else {
             $response = parent::render($request, $exception);
         }
 
