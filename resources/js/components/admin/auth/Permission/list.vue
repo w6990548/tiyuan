@@ -8,8 +8,7 @@
                 style="width: 100%"
                 row-key="id"
                 border
-                lazy
-                :load="load"
+                default-expand-all
                 ref="table"
                 :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
             <el-table-column
@@ -17,7 +16,9 @@
                     label="权限名称"
                     width="200">
                 <template slot-scope="scope">
-                    <el-tag size="medium">{{ scope.row.purview_name }}</el-tag>
+                    <el-tag size="medium" v-if="scope.row.level === 1" type="danger">{{ scope.row.purview_name }}</el-tag>
+                    <el-tag size="medium" v-if="scope.row.level === 2" type="warning">{{ scope.row.purview_name }}</el-tag>
+                    <el-tag size="medium" v-if="scope.row.level === 3">{{ scope.row.purview_name }}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
@@ -25,7 +26,7 @@
                     label="url"
                     width="300">
                 <template slot-scope="scope">
-                    <el-tag size="medium" type="danger">{{ scope.row.name }}</el-tag>
+                    <el-tag size="medium" type="info">{{ scope.row.name }}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
@@ -34,12 +35,13 @@
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
+                    <el-button v-if="scope.row.level < 3"
+                            type="primary"
+                            size="mini"
+                            @click="openDialog('isAdd', scope.row)">添加子权限</el-button>
                     <el-button
                             size="mini"
-                            @click="handleEdit(scope.$index, scope.row)">添加子权限</el-button>
-                    <el-button
-                            size="mini"
-                            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            @click="openDialog('isEdit', scope.row)">编辑</el-button>
                     <el-button
                             size="mini"
                             type="danger"
@@ -47,17 +49,24 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-dialog title="添加权限" :visible.sync="isAdd" width="450px" center>
-            <purview-form @cancel="isAdd = false" @save="doAddPermissions" :PermissionsData1="PermissionsData"></purview-form>
+        <el-dialog title="添加权限" :visible.sync="isAdd" width="450px" center v-if="isAdd" @close="closeAddDialog">
+            <purview-form
+                    @cancel="closeAddDialog"
+                    @save="doAddPermissions"
+                    :PermissionsData="topPermissionData"
+                    :id="id"
+                    :isAddOrEdit="isAddOrEdit"
+            />
         </el-dialog>
-        <el-pagination class="fr m-t-20 p-d-0"
-                       background
-                       layout="prev, pager, next"
-                       @current-change="getList"
-                       :current-page.sync="query.page"
-                       :page-size="query.pageSize"
-                       :total="total">
-        </el-pagination>
+        <el-dialog title="编辑权限" :visible.sync="isEdit" width="450px" center v-if="isEdit" @close="closeAddDialog">
+            <purview-form
+                    @cancel="closeAddDialog"
+                    @save="doEditPermissions"
+                    :PermissionsData="topPermissionData"
+                    :id="id"
+                    :isAddOrEdit="isAddOrEdit"
+            />
+        </el-dialog>
     </page>
 </template>
 <script>
@@ -68,14 +77,11 @@
         data(){
             return {
                 tableData: [],
-                PermissionsData: [],
-                maps: new Map(),
-                total: 0,
-                query: {
-                    page: 1,
-                    pageSize: 10,
-                },
+                topPermissionData: [],
+                id: 0,
+                isAddOrEdit: '',
                 isAdd: false,
+                isEdit: false,
             }
         },
         computed:{
@@ -83,23 +89,17 @@
         },
         methods: {
             getList() {
-                api.get('/api/admin/permissions', this.query).then(data => {
-                    this.tableData = data.data.list;
-                    this.total = data.data.total;
-                })
-            },
-            load(tree, treeNode, resolve) {
-                this.maps.set(tree.id, { tree, treeNode, resolve })
-                api.get('/api/admin/permissions', {
-                    pid: tree.id,
-                }).then(data => {
-                    resolve(data.data.list)
+                api.get('/api/admin/permissions').then(data => {
+                    this.tableData = data.data;
                 })
             },
             addPermissions() {
-                this.isAdd = true
-                api.get('/api/admin/permissions').then(data => {
-                    this.PermissionsData = data.data.list;
+                this.isAddOrEdit = 'isAdd';
+                this.isAdd = true;
+                api.get('/api/admin/permissions', {
+                    pid: 0
+                }).then(data => {
+                    this.topPermissionData = data.data;
                 })
             },
             doAddPermissions(form) {
@@ -107,9 +107,13 @@
                     this.$message.success('添加成功');
                     this.isAdd = false;
                     this.getList();
-                    if (form.pid !== 0) {
-                        this.resetTable(form);
-                    }
+                })
+            },
+            doEditPermissions(form) {
+                api.post('/api/admin/permissions/edit', form).then(data => {
+                    this.$message.success('修改成功');
+                    this.isEdit = false;
+                    this.getList();
                 })
             },
             deletePermissions(index, row) {
@@ -117,33 +121,28 @@
                     type: 'warning'
                 }).then(() => {
                     api.post('/api/admin/permissions/delete', {
-                        id: row.id
+                        id: row.id,
                     }).then(data => {
                         this.$message.success('删除成功');
                         this.getList();
-                        if (row.pid !== 0) {
-                            this.resetTable(row);
-                        }
                     })
                 }).catch(() => {
 
                 });
             },
-            resetTable(form) {
-                // 取出当前操作行的pid
-                const pid = form.pid
-                // 根据 pid 取出对应的节点数据
-                const { tree, treeNode, resolve } = this.maps.get(pid)
-                //将对应节点下的数据清空，从而实现数据的重新加载
-                this.$set(this.$refs.table.store.states.lazyTreeNodeMap, pid, []);
-                this.load( tree, treeNode, resolve )
+            openDialog(isAddOrEdit, row) {
+                isAddOrEdit === 'isAdd' ? this.isAdd = true : this.isEdit = true;
+                this.isAddOrEdit = isAddOrEdit;
+                let newData = [];
+                newData.push(row);
+                this.id = row.id;
+                this.topPermissionData = newData;
             },
-            handleEdit(index, row) {
-                console.log(index, row);
+            closeAddDialog() {
+                this.isAdd = false;
+                this.isEdit = false;
+                this.id = 0;
             },
-            handleClose(){
-                this.$refs.userForm.cancel()
-            }
         },
         created(){
             this.getList();

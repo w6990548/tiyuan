@@ -48,5 +48,7 @@ Route::prefix('admin')
             Route::post('permissions/create', 'Auth\PermissionsController@create');
             // 删除权限
             Route::post('permissions/delete', 'Auth\PermissionsController@delete');
+	        // 编辑权限
+	        Route::post('permissions/edit', 'Auth\PermissionsController@edit');
         });
 });

@@ -6,7 +6,7 @@
             </el-form-item>
             <el-form-item label="所属父权限">
                 <el-select v-model="form.pid" size="medium" class="w-300">
-                    <el-option :value="0" label="顶级权限"/>
+                    <el-option :value="0" v-if="id === 0" label="顶级权限"/>
                     <el-option
                             v-for="item in data"
                             :key="item.id"
@@ -29,10 +29,17 @@
 <script>
     export default {
         props: {
-            PermissionsData1: {
+            PermissionsData: {
                 type: Array,
-                default: () => []
-            }
+                default() {
+                    return []
+                }
+            },
+            id: {
+                type: Number,
+                default: 0
+            },
+            isAddOrEdit: { type: String, default: '' }
         },
         data() {
             return {
@@ -57,7 +64,21 @@
         },
         methods: {
             initForm() {
-
+                this.data = this.PermissionsData;
+                if (this.isAddOrEdit === 'isAdd') {
+                    this.form = {
+                        name: '',
+                        purview_name: '',
+                        pid: this.id
+                    };
+                } else {
+                    this.form = {
+                        name: this.data[0].name,
+                        purview_name: this.data[0].purview_name,
+                        id: this.data[0].id,
+                        pid: this.id
+                    };
+                }
             },
             cancel() {
                 this.$emit('cancel');
@@ -66,8 +87,8 @@
                 this.$refs[form].validate(valid => {
                     if(valid){
                         this.$emit('save', this.form);
-                        // this.$refs.form.resetFields();
                         this.$emit('cancel');
+                        this.initForm();
                     }
                 })
             }
@@ -76,9 +97,9 @@
             this.initForm();
         },
         watch: {
-            PermissionsData1() {
-                this.data = this.PermissionsData1;
-            }
+            PermissionsData() {
+                this.data = this.PermissionsData;
+            },
         }
     }
 </script>

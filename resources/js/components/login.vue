@@ -68,7 +68,6 @@
 									path: 'welcome'
 								});
 							}
-							console.log('返回数据', data);
 						})
 					} else {
 						return false;
@@ -78,7 +77,6 @@
 			info() {
 				api.get('/api/admin/user').then(data => {
 					if (data.code === 0) {
-						console.log(data);
 						this.$message.success('获取用户信息成功');
 					}
 				})
@@ -94,7 +92,6 @@
 			captcha() {
 				api.post('/api/admin/captchas', this.form).then(data => {
 					if (data.code === 0) {
-						console.log(data);
 						this.src = data.data.captcha_image;
 						this.form.captcha_key = data.data.captcha_key
 					}

@@ -6,6 +6,7 @@ use App\Exceptions\BaseResponseException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\PermissionRequest;
 use App\Models\Permission as newPermission;
+use App\Services\Admin\PermissionService;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use App\Result;
@@ -16,30 +17,20 @@ use Spatie\Permission\PermissionRegistrar;
 class PermissionsController extends Controller
 {
     /**
-     * 权限列表
+     * 权限树列表
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
-        $pid = $request->get('pid', 0);
-        $roleData = newPermission::where('pid', $pid)
-            ->when($pid === 0, function ($query) {
-                $query->withCount('childPermission as childCount');
-            })->paginate($request->pageSize);
+    	if ($request->pid === 0) {
+		    $tree = PermissionService::getTopPermissionAll();
+	    } else {
+	        $permissionData = PermissionService::getAll();
+	        $tree = PermissionService::converPermissionsToTree($permissionData);
+	    }
 
-        if ($pid === 0) {
-            foreach ($roleData as $item) {
-                if ($item->childCount > 0) {
-                    $item->hasChildren = true;
-                }
-            }
-        }
-
-        return Result::success([
-            'list' => $roleData->items(),
-            'total' => $roleData->total(),
-        ]);
+	    return Result::success($tree);
     }
 
     /**
@@ -81,19 +72,59 @@ class PermissionsController extends Controller
         return Result::success();
     }
 
+	/**
+	 * 删除权限
+	 * @author: FengLei
+	 * @time: 2020/6/29 17:58
+	 * @param Request $request
+	 * @return \Illuminate\Http\JsonResponse
+	 */
     public function delete(Request $request)
     {
-        $permission = Permission::findById($request->get('id'));
-        $roles = Role::get();
-        foreach ($roles as $role) {
-            // 移除角色的权限
-            $role->revokePermissionTo($permission);
-        }
+	    $permission = newPermission::findById($request->id);
+		// 所有角色
+	    $roles = Role::get();
+	    foreach ($roles as $role) {
+		    // 移除角色的顶级权限
+		    $role->revokePermissionTo($permission);
+		    self::dealwith($permission, $role);
+	    }
 
-        $permission->delete();
+		// 删除权限
+	    $permission->delete();
+
         // 需清除缓存，否则会报错
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         return Result::success();
+    }
+
+	/**
+	 * 处理二三级权限
+	 * @author: FengLei
+	 * @time: 2020/6/29 17:57
+	 * @param $permission [父权限]
+	 * @param $role [角色]
+	 */
+    public static function dealwith($permission, $role)
+    {
+	    // 下级权限不为空
+	    if ($permission->childPermission->isNotEmpty()) {
+		    foreach ($permission->childPermission as $secondItem) {
+			    // 移除角色的权限
+			    $role->revokePermissionTo($secondItem);
+			    // 删除权限
+			    $secondItem->delete();
+			    // 第三级权限
+			    self::dealwith($secondItem, $role);
+		    }
+	    }
+    }
+
+    public function edit(Request $request)
+    {
+    	$permission = PermissionService::getPermissionById($request->id);
+	    $permission->update($request->except('id', 'pid'));
+	    return Result::success();
     }
 }
