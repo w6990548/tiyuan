@@ -36,12 +36,16 @@ Route::prefix('admin')
 
             // 获取后台用户列表
             Route::get('users', 'Auth\UsersController@getUsers');
+
+	        /****************************** 角色管理 ******************************/
             // 获取后台用户角色列表
             Route::get('roles', 'Auth\RolesController@getRoles');
+            // 添加角色
+	        Route::post('roles/create', 'Auth\RolesController@create');
+	        // 删除角色
+	        Route::post('roles/delete', 'Auth\RolesController@delete');
 
-            /*************************************
-             * 权限管理
-             *************************************/
+	        /****************************** 权限管理 ******************************/
             // 获取后台权限列表
             Route::get('permissions', 'Auth\PermissionsController@index');
             // 添加权限

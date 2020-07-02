@@ -21,9 +21,9 @@
 				         :unique-opened="true" :default-active="defaultActive">
 					<el-submenu index="1">
 						<template slot="title"><i class="el-icon-message"></i>权限</template>
-						<el-menu-item index="users">用户管理</el-menu-item>
-						<el-menu-item index="roles">角色管理</el-menu-item>
-						<el-menu-item index="permissions">权限管理</el-menu-item>
+						<el-menu-item index="/users">用户管理</el-menu-item>
+						<el-menu-item index="/roles">角色管理</el-menu-item>
+						<el-menu-item index="/permissions">权限管理</el-menu-item>
 					</el-submenu>
 					<el-submenu index="2">
 						<template slot="title"><i class="el-icon-message"></i>导航一</template>
@@ -66,11 +66,17 @@
 				if (key !== this.$route.path) {
 					router.push({path: key, query: query})
 				} else {
-					router.replace({path: '/refresh', query: {name: this.$route.name, query: query}})
+					router.replace({
+                        path: '/refresh',
+                        query: {
+                            name: this.$route.name,
+                            query: query
+                        }
+					})
 				}
 			},
 			logout() {
-				api.post('/api/admin/logout').then(() => {
+				api.post('/logout').then(() => {
 					localStorage.removeItem('token');
 					this.$message.success('退出成功');
 					this.$router.push({
@@ -91,13 +97,13 @@
 			}
 		},
 		created() {
-			api.get('/api/admin/user').then(data => {
-				if (data.code === 0) {
-					this.$message.success('获取用户信息成功');
-				}
-			});
+			// api.get('/user').then(data => {
+			// 	if (data.code === 0) {
+			// 		this.$message.success('获取用户信息成功');
+			// 	}
+			// });
 			// 刷新页面展开当前页面导航
-			this.defaultActive = this.$route.path.substr(1);
+			this.defaultActive = this.$route.path;
 		}
 	};
 </script>

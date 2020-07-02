@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Exceptions\PermissionAlreadyExists;
+use Spatie\Permission\Exceptions\RoleAlreadyExists;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
@@ -90,10 +91,12 @@ class Handler extends ExceptionHandler
             $response = Result::error(10003, '您尚未登录');
         } elseif ($exception instanceof PermissionAlreadyExists) {
             $response = Result::error(10004, '权限已存在');
+        } elseif ($exception instanceof RoleAlreadyExists) {
+	        $response = Result::error(10006, '角色已存在');
         } elseif ($exception instanceof ModelNotFoundException) {
 	        $message = '数据不存在：'.$exception->getModel().'【'.implode(',', $exception->getIds()).'】';
 	        $response = Result::error(10010, $message);
-        }else {
+        } else {
             $response = parent::render($request, $exception);
         }
 

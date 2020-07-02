@@ -31,10 +31,6 @@ class CheckAdminPermissions
     public function handle($request, Closure $next)
     {
     	$user = Auth::guard('api')->user();
-    	// 若添加权限的地址不是以 / 开头，补上，防止报错
-	    if(substr($request->get('name'), 0, 1 ) !== "/"){
-		    $request->offsetSet('name', '/'.$request->get('name'));
-	    }
     	if (!in_array($request->path(), $this->apiUrl)) {
 	        // 用户是否有站长权限
 	        if (!$user->hasRole('zhanzhang')) {

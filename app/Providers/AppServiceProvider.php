@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +25,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+	    DB::listen(function($query) {
+		    $tmp = str_replace('?', '"'.'%s'.'"', $query->sql);
+		    $tmp = vsprintf($tmp, $query->bindings);
+		    $tmp = str_replace("\\","",$tmp);
+		    Log::info('执行时间: '.$query->time.'ms; '.$tmp.PHP_EOL);
+	    });
     }
 }

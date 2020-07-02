@@ -5,6 +5,14 @@ namespace App\Models;
 use DateTimeInterface;
 use Spatie\Permission\Models\Role as packageRole;
 
+/**
+ * Class Role
+ * @package App\Models
+ *
+ * @property string name
+ * @property string guard_name
+ */
+
 class Role extends packageRole
 {
     /**

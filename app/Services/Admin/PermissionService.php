@@ -10,7 +10,7 @@ class PermissionService
 	 * 获取某一条权限（一级、二级、三级）
 	 * @author: FengLei
 	 * @time: 2020/6/30 18:13
-	 * @param $id
+	 * @param $id [权限ID]
 	 * @return mixed
 	 */
 	public static function getPermissionById($id)
@@ -52,7 +52,6 @@ class PermissionService
 		foreach ($permissionData as $k=> $permission) {
 			$permissions[$k] = $permission->toArray();
 		}
-
 		$tree = [];
 		$level1 = [];
 		$level2 = [];

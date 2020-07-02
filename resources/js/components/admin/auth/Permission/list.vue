@@ -89,28 +89,28 @@
         },
         methods: {
             getList() {
-                api.get('/api/admin/permissions').then(data => {
+                api.get('/permissions').then(data => {
                     this.tableData = data.data;
                 })
             },
             addPermissions() {
                 this.isAddOrEdit = 'isAdd';
                 this.isAdd = true;
-                api.get('/api/admin/permissions', {
+                api.get('/permissions', {
                     pid: 0
                 }).then(data => {
                     this.topPermissionData = data.data;
                 })
             },
             doAddPermissions(form) {
-                api.post('/api/admin/permissions/create', form).then(data => {
+                api.post('/permissions/create', form).then(data => {
                     this.$message.success('添加成功');
                     this.isAdd = false;
                     this.getList();
                 })
             },
             doEditPermissions(form) {
-                api.post('/api/admin/permissions/edit', form).then(data => {
+                api.post('/permissions/edit', form).then(data => {
                     this.$message.success('修改成功');
                     this.isEdit = false;
                     this.getList();
@@ -120,7 +120,7 @@
                 this.$confirm('确认删除该权限吗?', '提示', {
                     type: 'warning'
                 }).then(() => {
-                    api.post('/api/admin/permissions/delete', {
+                    api.post('/permissions/delete', {
                         id: row.id,
                     }).then(data => {
                         this.$message.success('删除成功');
@@ -146,7 +146,6 @@
         },
         created(){
             this.getList();
-
         },
         components: {
             PurviewForm

@@ -62,7 +62,7 @@
         },
         methods: {
             getList() {
-                api.get('/api/admin/users', this.query).then(data => {
+                api.get('/users', this.query).then(data => {
                     this.tableData = data.data.list;
                     this.total = data.data.total;
                 })

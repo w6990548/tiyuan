@@ -35,6 +35,8 @@ const router = new VueRouter({
 window.router = router;
 // 全局挂载 api
 window.api = api;
+// 初始化接口根地址
+window.baseApiUrl = '/api/admin/';
 // 解决 ElementUI 导航栏中的 vue-router 在 3.0 版本以上重复点菜单报错问题
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
