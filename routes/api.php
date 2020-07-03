@@ -33,9 +33,15 @@ Route::prefix('admin')
             // 退出登录
             Route::post('logout', 'LoginController@logout');
 
-
+	        /****************************** 用户管理 ******************************/
             // 获取后台用户列表
             Route::get('users', 'Auth\UsersController@getUsers');
+            // 添加用户
+	        Route::post('users/create', 'Auth\UsersController@create');
+	        // 修改用户
+	        Route::post('users/edit', 'Auth\UsersController@edit');
+	        // 删除用户
+	        Route::post('users/delete', 'Auth\UsersController@delete');
 
 	        /****************************** 角色管理 ******************************/
             // 获取后台用户角色列表

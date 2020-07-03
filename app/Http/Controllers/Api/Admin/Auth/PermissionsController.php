@@ -53,6 +53,7 @@ class PermissionsController extends Controller
 			// 创建权限
 			$permission = Permission::create([
 				'name' => $request->name,
+				'guard_name' => 'api',
 				'purview_name' => $request->purview_name,
 				'level' => $request->pid === 0 ? 1 : $parent['level'] + 1,
 				'pid' => $request->pid,

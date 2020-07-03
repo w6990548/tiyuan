@@ -6,6 +6,7 @@ use App\Result;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Exceptions\PermissionAlreadyExists;
 use Spatie\Permission\Exceptions\RoleAlreadyExists;
@@ -96,6 +97,8 @@ class Handler extends ExceptionHandler
         } elseif ($exception instanceof ModelNotFoundException) {
 	        $message = '数据不存在：'.$exception->getModel().'【'.implode(',', $exception->getIds()).'】';
 	        $response = Result::error(10010, $message);
+        } elseif ($exception instanceof ThrottleRequestsException) {
+	        $response = Result::error(10010, '请求频繁，请稍后再试！');
         } else {
             $response = parent::render($request, $exception);
         }

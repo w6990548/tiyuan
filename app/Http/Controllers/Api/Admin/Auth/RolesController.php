@@ -46,7 +46,7 @@ class RolesController extends Controller
 	public function create(Request $request)
 	{
 		// 创建角色
-		$role = Role::create(['name' => $request->name]);
+		$role = Role::create(['guard_name' => 'api', 'name' => $request->name]);
 		$permissionData = PermissionService::getAll($request->keys);
 		// 添加权限
 		$role->syncPermissions($permissionData);

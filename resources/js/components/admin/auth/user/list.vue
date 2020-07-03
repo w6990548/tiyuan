@@ -1,5 +1,8 @@
 <template>
     <page title="用户管理">
+        <div class="m-b-20">
+            <el-button type="primary" size="small" @click="addUser">添加用户</el-button>
+        </div>
         <el-table :data="tableData" style="width: 100%" border>
             <el-table-column
                     label="ID"
@@ -16,6 +19,13 @@
                 </template>
             </el-table-column>
             <el-table-column
+                    label="所属角色"
+                    width="180">
+                <template slot-scope="scope">
+                    <el-tag size="medium" type="danger" v-for="item in scope.row.roles">{{ item.name }}</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column
                     label="添加时间"
                     width="180">
                 <template slot-scope="scope">
@@ -26,11 +36,11 @@
                 <template slot-scope="scope">
                     <el-button
                             size="mini"
-                            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            @click="editUser(scope.$index, scope.row)">编辑</el-button>
                     <el-button
                             size="mini"
                             type="danger"
-                            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                            @click="deleteUser(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -42,15 +52,28 @@
                        :page-size="query.pageSize"
                 :total="total">
         </el-pagination>
+        <el-dialog title="添加用户" :visible.sync="isAdd" width="450px" center v-if="isAdd">
+            <user-form @cancel="isAdd = false" :roleData="roleData" @save="doAddUser"/>
+        </el-dialog>
+        <el-dialog title="编辑用户" :visible.sync="isEdit" width="450px" center v-if="isEdit">
+            <user-form @cancel="isEdit = false" :roleData="roleData" :rowData="rowData" @save="doEditUser"/>
+        </el-dialog>
     </page>
 </template>
 <script>
+
+    import UserForm from './form';
+
     export default {
         name: 'list',
         data(){
             return {
                 tableData: [],
                 total: 0,
+                isAdd: false,
+                isEdit: false,
+                roleData: [],
+                rowData: [],
                 query: {
                     page: 1,
                     pageSize: 10,
@@ -64,25 +87,53 @@
             getList() {
                 api.get('/users', this.query).then(data => {
                     this.tableData = data.data.list;
+                    this.roleData = data.data.roles;
                     this.total = data.data.total;
                 })
             },
-            handleEdit(index, row) {
-                console.log(index, row);
+            addUser() {
+                this.isAdd = true;
             },
-            handleDelete(index, row) {
-                console.log(index, row);
+            doAddUser(form) {
+                api.post('/users/create', form).then(() => {
+                    this.$message.success('添加成功');
+                    this.isAdd = false;
+                    this.getList();
+                })
             },
-            handleClose(){
-                this.$refs.userForm.cancel()
-            }
+            editUser(index, row) {
+                this.isEdit = true;
+                this.rowData.showPwd = false;
+                this.rowData.role = row;
+            },
+            doEditUser(form) {
+                api.post('/users/edit', form).then(() => {
+                    this.$message.success('修改成功');
+                    this.isEdit = false;
+                    this.getList();
+                })
+            },
+            deleteUser(index, row) {
+                this.$confirm('确认要删除该用户吗？', '确认', {
+                    type: 'warning',
+                }).then(() => {
+                    api.post('/users/delete', {
+                        id: row.id
+                    }).then(() => {
+                        this.$message.success('删除成功');
+                        this.getList();
+                    })
+                }).catch(() => {
+
+                })
+            },
         },
         created(){
             this.getList();
 
         },
         components: {
-            // UserForm
+            UserForm
         }
     }
 </script>
