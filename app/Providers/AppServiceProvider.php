@@ -25,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+	    \Debugbar::disable();
 	    DB::listen(function($query) {
 		    $tmp = str_replace('?', '"'.'%s'.'"', $query->sql);
 		    $tmp = vsprintf($tmp, $query->bindings);

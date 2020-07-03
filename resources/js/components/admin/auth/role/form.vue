@@ -5,13 +5,12 @@
                 <el-input v-model="form.name" class="w-300" size="medium" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="权限列表">
-                <el-tree class="fl-el-tree"
-                        :data="data"
-                         ref="tree"
-                        show-checkbox
-                        node-key="id"
-                        default-expand-all
-                        :props="defaultProps">
+                <el-tree class="fl-el-tree" ref="tree"
+                         :data="data"
+                         :props="defaultProps"
+                         show-checkbox
+                         node-key="id"
+                         default-expand-all>
                 </el-tree>
             </el-form-item>
             <el-form-item label-width="0" align="center">
@@ -25,23 +24,35 @@
 <script>
     export default {
         props: {
-
+            permisionData: {
+                type: Array,
+                default() {
+                    return []
+                }
+            },
+            rowData: {
+                type: Object,
+                default() {
+                    return {}
+                }
+            }
         },
         data() {
             return {
                 form: {
+                    id: 0,
                     name: '',
                     keys: [],
                 },
-                // data: [],
                 formLabelWidth: '90px',
                 rules: {
                     name: [
-                        { required: true, message: '请输入角色名称', trigger: 'blur' },
-                        { min: 2, max: 15, message: '长度在2-15个字符', trigger: 'blur' }
+                        {required: true, message: '请输入角色名称', trigger: 'blur'},
+                        {min: 2, max: 15, message: '长度在2-15个字符', trigger: 'blur'}
                     ]
                 },
                 data: [],
+                newCheckedKeys: [],
                 defaultProps: {
                     children: 'children',
                     label: 'purview_name'
@@ -50,35 +61,37 @@
         },
         methods: {
             initForm() {
-
+                this.data = this.permisionData;
+                this.form = {
+                    name: this.rowData.name,
+                    id: this.rowData.id,
+                    keys: this.rowData.checkedKeys,
+                }
+                if (this.rowData.isEdit) {
+                    this.$nextTick(() => {
+                        // 渲染已经存在的权限
+                        this.$refs.tree.setCheckedNodes(this.form.keys);
+                    });
+                }
             },
             cancel() {
                 this.$emit('cancel');
             },
-            getCheckedNodes() {
-                console.log(this.$refs.tree.getCheckedNodes());
-            },
-            getCheckedKeys() {
-                console.log(this.$refs.tree.getCheckedKeys());
-            },
             save(form) {
-                this.form.keys = this.$refs.tree.getCheckedKeys();
+                this.form.keys = this.$refs.tree.getCheckedNodes(false, true).map((item) => {
+                    return item.id;
+                })
                 this.$refs[form].validate(valid => {
-                    if(valid){
+                    if (valid) {
                         this.$emit('save', this.form);
-                        // this.$emit('cancel');
                     }
                 })
             }
         },
         created() {
-            api.get('/permissions').then(data => {
-                this.data = data.data;
-            })
+            this.initForm();
         },
-        watch: {
-
-        }
+        watch: {}
     }
 </script>
 

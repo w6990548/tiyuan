@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Message } from 'element-ui';
 
+window.baseApiUrl = window.baseApiUrl || '';
 class ResponseError {
 	constructor(response) {
 		this.response = response;
@@ -13,6 +14,7 @@ function get(url, params) {
 		params: params,
 	};
 	getToken(options);
+    url = getRealUrl(url);
 	let promise = axios.get(url, options).then(res => {
 		return handlerRes(res.data);
 	});
@@ -25,6 +27,7 @@ function post(url, params) {
 		headers: {'X-Requested-With': 'XMLHttpRequest'},
 	};
 	getToken(options);
+    url = getRealUrl(url);
 	let promise = axios.post(url, params, options).then(res => {
 		return handlerRes(res.data);
 	});
@@ -39,6 +42,17 @@ function getToken(options) {
 		options.headers.Authorization = token;
 		return options;
 	}
+}
+
+// 处理 API 请求地址
+function getRealUrl(url) {
+    if (url.indexOf(window.baseApiUrl) === 0) {
+        return url;
+    }
+    if (url.indexOf('/') === 0) {
+        url = url.substr(1);
+    }
+    return window.baseApiUrl + url
 }
 
 function handlerRes(res) {

@@ -1,7 +1,7 @@
 <template>
     <page title="角色管理">
         <div class="m-b-20">
-            <el-button type="primary" size="small" @click="addRoles">添加角色</el-button>
+            <el-button type="primary" size="small" @click="addRole">添加角色</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%" border>
             <el-table-column type="expand">
@@ -12,7 +12,7 @@
                             <el-tag v-if="item.level === 1" class="fl-el-tag" type="danger">
                                 {{ item.purview_name+'【' + item.name+'】' }}
                             </el-tag>
-                            <el-tag v-else-if="item.level === 2"  class="fl-el-tag" type="warning">
+                            <el-tag v-else-if="item.level === 2" class="fl-el-tag" type="warning">
                                 {{ item.purview_name+'【' + item.name+'】' }}
                             </el-tag>
                             <el-tag v-else class="fl-el-tag">
@@ -40,11 +40,13 @@
                 <template slot-scope="scope">
                     <el-button
                             size="mini"
-                            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            @click="editRole(scope.$index, scope.row)">编辑
+                    </el-button>
                     <el-button
                             size="mini"
                             type="danger"
-                            @click="deleteRole(scope.$index, scope.row)">删除</el-button>
+                            @click="deleteRole(scope.$index, scope.row)">删除
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -57,7 +59,10 @@
                        :total="total">
         </el-pagination>
         <el-dialog title="添加角色" :visible.sync="isAdd" width="450px" center v-if="isAdd">
-            <role-form @cancel="isAdd = false" @save="doAddRoles"/>
+            <role-form @cancel="isAdd = false" :permisionData="permisionData" @save="doAddRole"/>
+        </el-dialog>
+        <el-dialog title="编辑角色" :visible.sync="isEdit" width="450px" center v-if="isEdit">
+            <role-form @cancel="isEdit = false" :rowData="data" :permisionData="permisionData" @save="doEditRole"/>
         </el-dialog>
     </page>
 </template>
@@ -67,7 +72,7 @@
 
     export default {
         name: 'list',
-        data(){
+        data() {
             return {
                 tableData: [],
                 total: 0,
@@ -76,11 +81,12 @@
                     pageSize: 10,
                 },
                 isAdd: false,
+                isEdit: false,
+                data: Object,
+                permisionData: [],
             }
         },
-        computed:{
-
-        },
+        computed: {},
         methods: {
             getList() {
                 api.get('/roles', this.query).then(data => {
@@ -88,18 +94,36 @@
                     this.total = data.data.total;
                 })
             },
-            addRoles() {
+            getPermissions() {
+                api.get('/permissions').then(data => {
+                    this.permisionData = data.data;
+                });
+            },
+            addRole() {
                 this.isAdd = true;
             },
-            doAddRoles(form) {
+            doAddRole(form) {
                 api.post('/roles/create', form).then(() => {
                     this.$message.success('添加成功');
                     this.isAdd = false;
                     this.getList();
                 })
             },
-            handleEdit(index, row) {
-                console.log(index, row);
+            editRole(index, row) {
+                this.isEdit = true;
+                this.data = {
+                    id: row.id,
+                    name: row.name,
+                    isEdit: true,
+                    checkedKeys: row.checkedKeys,
+                }
+            },
+            doEditRole(form) {
+                api.post('/roles/edit', form).then(() => {
+                    this.$message.success('编辑成功');
+                    this.isEdit = false;
+                    this.getList();
+                })
             },
             deleteRole(index, row) {
                 this.$confirm('确认要删除该角色吗？', '确认', {
@@ -114,14 +138,11 @@
                 }).catch(() => {
 
                 })
-                console.log(index, row);
             },
-            handleClose(){
-                this.$refs.userForm.cancel()
-            }
         },
-        created(){
+        created() {
             this.getList();
+            this.getPermissions();
         },
         components: {
             RoleForm

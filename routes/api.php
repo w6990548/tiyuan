@@ -42,6 +42,8 @@ Route::prefix('admin')
             Route::get('roles', 'Auth\RolesController@getRoles');
             // 添加角色
 	        Route::post('roles/create', 'Auth\RolesController@create');
+	        // 编辑角色
+	        Route::post('roles/edit', 'Auth\RolesController@edit');
 	        // 删除角色
 	        Route::post('roles/delete', 'Auth\RolesController@delete');
 

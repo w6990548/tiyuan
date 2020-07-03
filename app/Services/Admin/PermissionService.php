@@ -7,26 +7,17 @@ use App\Models\Permission as newPermission;
 class PermissionService
 {
 	/**
-	 * 获取某一条权限（一级、二级、三级）
-	 * @author: FengLei
-	 * @time: 2020/6/30 18:13
-	 * @param $id [权限ID]
-	 * @return mixed
-	 */
-	public static function getPermissionById($id)
-	{
-		return newPermission::findOrFail($id);
-	}
-
-	/**
 	 * 获取所有权限
 	 * @author: FengLei
 	 * @time: 2020/6/30 14:32
+	 * @param array $ids [权限IDs]
 	 * @return mixed
 	 */
-	public static function getAll()
+	public static function getAll($ids = [])
 	{
-		return newPermission::get();
+		return newPermission::when($ids, function ($query) use ($ids) {
+			$query->whereIn('id', $ids);
+		})->get();
 	}
 
 	/**
@@ -45,13 +36,15 @@ class PermissionService
 	 * @author: FengLei
 	 * @time: 2020/6/30 10:52
 	 * @param $permissionData [所有权限]
-	 * @return array
+	 * @param bool $waith
+	 * @return array|array[]
 	 */
-	public static function converPermissionsToTree($permissionData)
+	public static function converPermissionsToTree($permissionData, $withArray = false)
 	{
-		foreach ($permissionData as $k=> $permission) {
+		foreach ($permissionData as $k => $permission) {
 			$permissions[$k] = $permission->toArray();
 		}
+
 		$tree = [];
 		$level1 = [];
 		$level2 = [];
@@ -70,6 +63,10 @@ class PermissionService
 				default:
 					break;
 			}
+		}
+
+		if ($withArray) {
+			return [$level1, $level2, $level3];
 		}
 
 		$level2 = self::compositeStructure($level3, $level2);
@@ -98,5 +95,25 @@ class PermissionService
 			}
 		}
 		return $supPermission;
+	}
+
+	/**
+	 * 特殊处理编辑页的权限列表
+	 * @author: FengLei
+	 * @time: 2020/7/3 12:17
+	 * @param $permissions [父权限]
+	 * @param $subPermissions [子权限]
+	 * @return mixed
+	 */
+	public static function specialConverPermissions($permissions, $subPermissions)
+	{
+		foreach ($permissions as $pid => $permission) {
+			foreach ($subPermissions as $subPermission) {
+				if ($pid == $subPermission->pid) {
+					unset($permissions[$pid]);
+				}
+			}
+		}
+		return $permissions;
 	}
 }
