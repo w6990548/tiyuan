@@ -88,4 +88,31 @@ class UsersController extends Controller
         }
         return Result::success();
     }
+
+    /**
+     * 重置密码
+     * @author: FengLei
+     * @time: 2020/7/6 17:18
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function reset(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|integer|min:1',
+            'password' => 'required|between:6,18|alpha_dash'
+        ]);
+        $adminUser = AdminUserService::findById($request->id);
+
+        // 超级管理员只能自己重置密码，别人有权限也不行
+        if (!$request->user()->hasRole(AdminUser::ADMIN) && $request->id == 1) {
+            return Result::error('10000', '你想干什么？');
+        } else {
+            $adminUser->update([
+                'password' => Hash::make($request->password),
+            ]);
+            return Result::success();
+        }
+    }
 }

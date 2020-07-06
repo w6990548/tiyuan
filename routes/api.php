@@ -42,6 +42,8 @@ Route::prefix('admin')
             Route::post('users/edit', 'Auth\UsersController@edit');
             // 删除用户
             Route::post('users/delete', 'Auth\UsersController@delete');
+            // 重置密码
+            Route::post('users/reset', 'Auth\UsersController@reset');
 
             /****************************** 角色管理 ******************************/
             // 获取后台用户角色列表

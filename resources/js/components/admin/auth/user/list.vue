@@ -39,23 +39,32 @@
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button
+                            type="primary"
                             size="mini"
-                            @click="editUser(scope.$index, scope.row)">编辑</el-button>
+                            @click="editUser(scope.$index, scope.row)">编辑
+                    </el-button>
+                    <el-button
+                            v-if="(userId !== 1 && scope.row.id > 1) || userId == 1"
+                            type="warning"
+                            size="mini"
+                            @click="resetPwd(scope.row)">重置密码
+                    </el-button>
                     <el-button
                             v-if="scope.row.id !== 1"
                             size="mini"
                             type="danger"
-                            @click="deleteUser(scope.$index, scope.row)">删除</el-button>
+                            @click="deleteUser(scope.$index, scope.row)">删除
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
         <el-pagination class="fr m-t-20 p-d-0"
-                background
-                layout="prev, pager, next"
+                       background
+                       layout="prev, pager, next"
                        @current-change="getList"
                        :current-page.sync="query.page"
                        :page-size="query.pageSize"
-                :total="total">
+                       :total="total">
         </el-pagination>
         <el-dialog title="添加用户" :visible.sync="isAdd" width="450px" center v-if="isAdd">
             <user-form @cancel="isAdd = false" :roleData="roleData" @save="doAddUser"/>
@@ -71,7 +80,7 @@
 
     export default {
         name: 'list',
-        data(){
+        data() {
             return {
                 tableData: [],
                 total: 0,
@@ -85,8 +94,11 @@
                 }
             }
         },
-        computed:{
-
+        computed: {
+            userId() {
+                let user = localStorage.getItem('user');
+                return user ? JSON.parse(user).id : '';
+            }
         },
         methods: {
             getList() {
@@ -118,6 +130,22 @@
                     this.getList();
                 })
             },
+            resetPwd(row) {
+                this.$prompt('', '重置用户 【' + row.username + '】 的密码', {
+                    type: 'warning',
+                    inputPlaceholder: '请输入新密码'
+                }).then(({value}) => {
+                    console.log(row,value);
+                    api.post('/users/reset', {
+                        id: row.id,
+                        password: value,
+                    }).then(() => {
+                        this.$message.success('重置成功');
+                    })
+                }).catch(() => {
+
+                })
+            },
             deleteUser(index, row) {
                 this.$confirm('确认要删除该用户吗？', '确认', {
                     type: 'warning',
@@ -133,9 +161,8 @@
                 })
             },
         },
-        created(){
+        created() {
             this.getList();
-
         },
         components: {
             UserForm
