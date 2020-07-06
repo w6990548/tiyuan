@@ -8,7 +8,6 @@ use App\Exceptions\DataNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\LoginRequest;
 use App\Result;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -45,7 +44,8 @@ class LoginController extends Controller
         }
         return Result::success([
             'token' => $token,
-            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
+            'user_info' => Auth::guard('api')->user(),
         ]);
     }
 

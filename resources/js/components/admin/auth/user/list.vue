@@ -22,7 +22,11 @@
                     label="所属角色"
                     width="180">
                 <template slot-scope="scope">
-                    <el-tag size="medium" type="danger" v-for="item in scope.row.roles">{{ item.name }}</el-tag>
+                    <el-tag size="medium" type="danger"
+                            v-for="item in scope.row.roles"
+                            :key="item.id">
+                        {{ item.name }}
+                    </el-tag>
                 </template>
             </el-table-column>
             <el-table-column
