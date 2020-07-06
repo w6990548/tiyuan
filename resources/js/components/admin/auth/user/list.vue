@@ -42,6 +42,7 @@
                             size="mini"
                             @click="editUser(scope.$index, scope.row)">编辑</el-button>
                     <el-button
+                            v-if="scope.row.id !== 1"
                             size="mini"
                             type="danger"
                             @click="deleteUser(scope.$index, scope.row)">删除</el-button>

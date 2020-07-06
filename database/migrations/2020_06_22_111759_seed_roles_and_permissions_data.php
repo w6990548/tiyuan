@@ -1,10 +1,9 @@
 <?php
 
+use App\Models\AdminUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -27,7 +26,7 @@ class SeedRolesAndPermissionsData extends Migration
         Permission::create(['guard_name' => 'api', 'name' => 'api/admin/permissions', 'purview_name' => '权限管理']);
 
         // 创建站长角色，并赋予权限
-        $founder = Role::create(['guard_name' => 'api', 'name' => 'zhanzhang']);
+        $founder = Role::create(['guard_name' => 'api', 'name' => AdminUser::ADMIN]);
         $founder->givePermissionTo('api/admin');
         $founder->givePermissionTo('api/admin/users');
         $founder->givePermissionTo('api/admin/roles');
@@ -38,7 +37,7 @@ class SeedRolesAndPermissionsData extends Migration
         $maintainer->givePermissionTo('api/admin/permissions');
 
         // 一个一级，三个二级
-        Permission::whereIn('id', [2,3,4])->update([
+        Permission::whereIn('id', [2, 3, 4])->update([
             'level' => 2,
             'pid' => 1,
         ]);

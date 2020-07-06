@@ -15,6 +15,8 @@ class AdminUser extends Authenticatable implements JWTSubject
 
     protected $guard_name = 'api';
 
+    const ADMIN = 'zhanzhang';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -36,7 +38,7 @@ class AdminUser extends Authenticatable implements JWTSubject
     /**
      * 为数组 / JSON 序列化准备日期。
      *
-     * @param  \DateTimeInterface  $date
+     * @param \DateTimeInterface $date
      * @return string
      */
     protected function serializeDate(DateTimeInterface $date)

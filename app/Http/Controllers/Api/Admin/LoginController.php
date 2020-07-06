@@ -23,12 +23,12 @@ class LoginController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        $captchaData = Cache::get($request->captcha_key);
-        if (!$captchaData) {
-            throw new DataNotFoundException('图片验证码已失效');
-        }
-
         if (app()->environment('production')) {
+            $captchaData = Cache::get($request->captcha_key);
+            if (!$captchaData) {
+                throw new DataNotFoundException('图片验证码已失效');
+            }
+
             // 防止时序攻击，使用 hash_equals 函数来进行比较
             if (!hash_equals(strtolower($captchaData['code']), strtolower($request->captcha))) {
                 Cache::forget($request->captcha_key);

@@ -9,7 +9,7 @@
                 <el-input v-model="form.password" placeholder="请输入密码" class="w-300" size="medium"
                           autocomplete="off" show-password></el-input>
             </el-form-item>
-            <el-form-item label="所属角色">
+            <el-form-item label="所属角色" v-if="form.role !== 1">
                 <el-select v-model="form.role" size="medium" class="w-300" placeholder="请选择" clearable>
                     <el-option
                             v-for="item in data"
@@ -78,6 +78,7 @@
                         id: this.rowData.role.id,
                         username: this.rowData.role.username,
                         role: this.rowData.role.roles[0] ? this.rowData.role.roles[0].id : '',
+                        name: this.rowData.role.roles[0] ? this.rowData.role.roles[0].name : '',
                     };
                     this.showPwd = this.rowData.showPwd;
                 }
