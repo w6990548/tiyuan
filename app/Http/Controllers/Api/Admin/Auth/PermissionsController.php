@@ -98,10 +98,10 @@ class PermissionsController extends Controller
         $permission = newPermission::findById($request->id);
         // 三级权限 直接删除，二级权限-需要删除三级，顶级权限-需要删除二三级权限
 
-        if ($permission->childPermission->isNotEmpty()) {
+        if (!is_null($permission->childPermission)) {
             if ($permission->level === 1) {
                 foreach ($permission->childPermission as $secondItem) {
-                    if ($secondItem->childPermission->isNotEmpty()) {
+                    if (!is_null($secondItem->childPermission)) {
                         // 删除三级权限
                         $secondItem->childPermission()->delete();
                     }
