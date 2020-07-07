@@ -15,7 +15,7 @@ class PermissionService
 	 */
 	public static function getAll($ids = [])
 	{
-		return newPermission::when($ids, function ($query) use ($ids) {
+		return newPermission::when(!empty($ids), function ($query) use ($ids) {
 			$query->whereIn('id', $ids);
 		})->get();
 	}
@@ -95,25 +95,5 @@ class PermissionService
 			}
 		}
 		return $supPermission;
-	}
-
-	/**
-	 * 特殊处理编辑页的权限列表
-	 * @author: FengLei
-	 * @time: 2020/7/3 12:17
-	 * @param $permissions [父权限]
-	 * @param $subPermissions [子权限]
-	 * @return mixed
-	 */
-	public static function specialConverPermissions($permissions, $subPermissions)
-	{
-		foreach ($permissions as $pid => $permission) {
-			foreach ($subPermissions as $subPermission) {
-				if ($pid == $subPermission->pid) {
-					unset($permissions[$pid]);
-				}
-			}
-		}
-		return $permissions;
 	}
 }

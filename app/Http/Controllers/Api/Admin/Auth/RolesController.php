@@ -23,12 +23,11 @@ class RolesController extends Controller
 			->paginate($request->pageSize);
 
 		foreach ($roleData as $item) {
+            $item->checkedKeys = [];
 			if ($item['permissions']->isNotEmpty()) {
 				list($level1Data, $level2Data, $level3Data) = PermissionService::converPermissionsToTree($item['permissions'], true);
-				$level1Data = PermissionService::specialConverPermissions($level1Data, $level2Data);
-				$level2Data = PermissionService::specialConverPermissions($level2Data, $level3Data);
+			    $item->checkedKeys = array_merge($level1Data, $level2Data, $level3Data);
 			}
-			$item->checkedKeys = array_merge($level1Data, $level2Data, $level3Data);
 		}
 		return Result::success([
 			'list' => $roleData->items(),
@@ -47,9 +46,12 @@ class RolesController extends Controller
 	{
 		// 创建角色
 		$role = Role::create(['guard_name' => 'api', 'name' => $request->name]);
-		$permissionData = PermissionService::getAll($request->keys);
+        $permissionData = [];
+		if (!empty($request->keys)) {
+		    $permissionData = PermissionService::getAll($request->keys);
+        }
+        $role->syncPermissions($permissionData);
 		// 添加权限
-		$role->syncPermissions($permissionData);
 		return Result::success();
 	}
 
@@ -63,7 +65,10 @@ class RolesController extends Controller
 	public function edit(Request $request)
 	{
 		$role = Role::findById($request->id);
-		$permissionData = PermissionService::getAll($request->keys);
+        $permissionData = [];
+        if (!empty($request->keys)) {
+		    $permissionData = PermissionService::getAll($request->keys);
+        }
 		// 更新权限
 		$role->syncPermissions($permissionData);
 		$role->update($request->except(['id', 'keys']));
