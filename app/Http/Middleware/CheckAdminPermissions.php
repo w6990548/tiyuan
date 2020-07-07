@@ -13,33 +13,35 @@ use Illuminate\Support\Facades\Auth;
  */
 class CheckAdminPermissions
 {
-	/**
-	 * 不需要验证权限的地址
-	 * @var string[]
-	 */
-	private $apiUrl = [
-		'api/admin/logout'
-	];
+    /**
+     * 不需要验证权限的地址
+     * @var string[]
+     */
+    private $apiUrl = [
+        'api/admin/logout', // 退出
+        'api/admin/permissions', // 权限列表
+        'api/admin/leftmenu' // 左侧导航
+    ];
 
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-    	$user = Auth::guard('api')->user();
-    	if (!in_array($request->path(), $this->apiUrl)) {
-	        // 用户是否有站长权限
-	        if (!$user->hasRole('zhanzhang')) {
-	            // 用户是否有该权限
-			    if (!$user->can($request->path())) {
-				    throw new NoPermissionException('权限不足 '.$request->path());
-			    }
-		    }
-	    }
+        $user = Auth::guard('api')->user();
+        if (!in_array($request->path(), $this->apiUrl)) {
+            // 用户是否有站长权限
+            if (!$user->hasRole('zhanzhang')) {
+                // 用户是否有该权限
+                if (!$user->can($request->path())) {
+                    throw new NoPermissionException('权限不足 '.$request->path());
+                }
+            }
+        }
         return $next($request);
     }
 }

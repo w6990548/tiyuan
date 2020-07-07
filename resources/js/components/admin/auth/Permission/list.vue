@@ -91,16 +91,12 @@
             getList() {
                 api.get('/permissions').then(data => {
                     this.tableData = data.data;
+                    this.topPermissionData = data.data;
                 })
             },
             addPermissions() {
                 this.isAddOrEdit = 'isAdd';
                 this.isAdd = true;
-                api.get('/permissions', {
-                    pid: 0
-                }).then(data => {
-                    this.topPermissionData = data.data;
-                })
             },
             doAddPermissions(form) {
                 api.post('/permissions/create', form).then(data => {

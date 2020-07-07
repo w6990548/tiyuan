@@ -6,6 +6,7 @@
 					{{ username }}
 				</span>
                 <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="refresh-rules">刷新权限</el-dropdown-item>
                     <el-dropdown-item command="logout">退出登陆</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -13,29 +14,7 @@
 
         <el-container>
             <el-aside>
-                <el-menu class="el-menu-vertical-demo"
-                         background-color="#545c64"
-                         text-color="#fff"
-                         @select="change"
-                         active-text-color="#ffd04b"
-                         :unique-opened="true" :default-active="defaultActive">
-                    <el-submenu index="1">
-                        <template slot="title"><i class="el-icon-message"></i>权限</template>
-                        <el-menu-item index="/users">用户管理</el-menu-item>
-                        <el-menu-item index="/roles">角色管理</el-menu-item>
-                        <el-menu-item index="/permissions">权限管理</el-menu-item>
-                    </el-submenu>
-                    <el-submenu index="2">
-                        <template slot="title"><i class="el-icon-message"></i>导航一</template>
-                        <el-menu-item index="2-1">选项1</el-menu-item>
-                        <el-menu-item index="2-2">选项2</el-menu-item>
-                        <el-menu-item index="2-3">选项3</el-menu-item>
-                        <el-submenu index="2-4">
-                            <template slot="title">选项4</template>
-                            <el-menu-item index="2-4-1">选项4-1</el-menu-item>
-                        </el-submenu>
-                    </el-submenu>
-                </el-menu>
+                <left-menu :menu="menu"></left-menu>
             </el-aside>
             <el-container>
                 <el-main class="fl-el-main">
@@ -50,31 +29,15 @@
 </template>
 
 <script>
+    import leftMenu from './leftmenu';
+
     export default {
         data() {
-            const item = {
-                date: '2016-05-02',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-            };
             return {
-                defaultActive: '', // 选中展开的菜单项
-            };
+                menu: [],
+            }
         },
         methods: {
-            change(key, query) {
-                if (key !== this.$route.path) {
-                    router.push({path: key, query: query})
-                } else {
-                    router.replace({
-                        path: '/refresh',
-                        query: {
-                            name: this.$route.name,
-                            query: query
-                        }
-                    })
-                }
-            },
             logout() {
                 api.post('/logout').then(() => {
                     localStorage.removeItem('token');
@@ -93,7 +56,16 @@
                     case 'logout':
                         this.logout()
                         break;
+                    case 'refresh-rules':
+                        // 暂时先刷新页面
+                        location.reload();
+                        break;
                 }
+            },
+            getLeftMenu() {
+                api.get('/leftmenu').then(data => {
+                    this.menu = data.data;
+                })
             }
         },
         computed: {
@@ -103,13 +75,10 @@
             }
         },
         created() {
-            // api.get('/user').then(data => {
-            // 	if (data.code === 0) {
-            // 		this.$message.success('获取用户信息成功');
-            // 	}
-            // });
-            // 刷新页面展开当前页面导航
-            this.defaultActive = this.$route.path;
+            this.getLeftMenu();
+        },
+        components: {
+            leftMenu
         }
     };
 </script>

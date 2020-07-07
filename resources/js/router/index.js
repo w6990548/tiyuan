@@ -1,7 +1,6 @@
 import Home from'../components/home';
 import login from '../components/login.vue';
 import welcome from "../components/welcome.vue";
-import refresh from '../components/refresh.vue'
 import ErrorPage from "../components/404.vue";
 
 // 权限模块
@@ -17,13 +16,11 @@ const routes = [
 		component: Home,
 		children: [
 			{path: 'welcome', component: welcome, name: 'welcome'},
+            {path: '404', name: '404', component: ErrorPage},
 		]
 	},
 	{ path: '/welcome', name: welcome, component: welcome },
-	// 刷新组件
-	{ path: '/refresh', component: refresh, name: 'refresh' },
 	// 拦截所有无效页面到404
-	{ path: '/404', name: '404', component: ErrorPage },
 	{ path: '*', redirect: '/404' },
 	{ path: '/', redirect: '/login' },
 
@@ -35,6 +32,7 @@ const routes = [
 			{path: 'users', component: UserList, name: 'UserList'},
 			{path: 'roles', component: RoleList, name: 'RoleList'},
 			{path: 'permissions', component: PermissionList, name: 'PermissionList'},
+
 		]
 	},
 
