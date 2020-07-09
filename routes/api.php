@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+// 图片上传到七牛云
+Route::post('upload/image', 'UploadController@image');
 
 Route::prefix('admin')
     ->namespace('Api\Admin')
@@ -33,6 +35,9 @@ Route::prefix('admin')
             // 退出登录
             Route::post('logout', 'LoginController@logout');
 
+            /**
+             * 权限
+             */
             /****************************** 用户管理 ******************************/
             // 获取后台用户列表
             Route::get('users', 'Auth\UsersController@getUsers');
@@ -66,5 +71,9 @@ Route::prefix('admin')
             Route::post('permissions/edit', 'Auth\PermissionsController@edit');
             // 左侧导航菜单
             Route::get('leftmenu', 'Auth\PermissionsController@leftmenu');
+
+            /**
+             * 设置
+             */
         });
     });
