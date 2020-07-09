@@ -1,15 +1,31 @@
 <template>
     <el-container>
         <el-header class="fl-el-header">
-            <el-dropdown @command="handleSelect">
-				<span class="el-dropdown-link">
-					{{ username }}
-				</span>
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="refresh-rules">刷新权限</el-dropdown-item>
-                    <el-dropdown-item command="logout">退出登陆</el-dropdown-item>
-                </el-dropdown-menu>
-            </el-dropdown>
+            <el-row type="flex" class="row-bg h-60" justify="space-between">
+                <el-col :span="2">
+                    <div class="demo-image__placeholder">
+                        <div class="block">
+                            <el-image style="width: 150px; height: 60px"
+                                      fit="contain"
+                                      src="https://cdn.learnku.com/uploads/images/202007/08/16257/YuwONvpOgY.png!large"/>
+                            <div slot="error" class="image-slot tx-c">
+                                <i class="el-icon-picture-outline"></i>
+                            </div>
+                        </div>
+                    </div>
+                </el-col>
+                <el-col :span="3">
+                    <el-dropdown @command="handleSelect" placement="bottom">
+                        <span class="el-dropdown-link">
+                            {{ username }}
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="refresh-rules" icon="el-icon-refresh">刷新权限</el-dropdown-item>
+                            <el-dropdown-item command="logout" icon="el-icon-switch-button">退出登陆</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </el-col>
+            </el-row>
         </el-header>
 
         <el-container>
@@ -101,7 +117,7 @@
 
     .el-dropdown {
         color: rgb(255, 255, 255);
-        margin-right: 20px;
+        margin-right: 50px;
     }
 
     .el-aside {

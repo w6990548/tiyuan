@@ -14,7 +14,8 @@
             <el-menu-item
                     :index="child.name.replace('api/admin', '')"
                     v-if="item.children.length > 0"
-                    v-for="child in item.children">
+                    v-for="child in item.children"
+                    :key="child.id">
                 {{ child.purview_name }}
             </el-menu-item>
         </el-submenu>

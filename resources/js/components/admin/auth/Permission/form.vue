@@ -4,7 +4,7 @@
             <el-form-item label="权限名称" prop="purview_name">
                 <el-input v-model="form.purview_name" class="w-300" size="medium" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="所属父权限">
+            <el-form-item label="所属父权限" v-if="isAddOrEdit === 'isAdd'">
                 <el-select v-model="form.pid" size="medium" class="w-300">
                     <el-option :value="0" v-if="id === 0" label="顶级权限"/>
                     <el-option
@@ -53,7 +53,7 @@
                 rules: {
                     purview_name: [
                         { required: true, message: '请输入权限名称', trigger: 'blur' },
-                        { min: 3, max: 10, message: '长度在3-10个字符', trigger: 'blur' }
+                        { min: 2, max: 10, message: '长度在2-10个字符', trigger: 'blur' }
                     ],
                     name: [
                         { required: true, message: '请输入权限地址', trigger: 'blur' },

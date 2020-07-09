@@ -14,7 +14,7 @@ class PermissionRequest extends FormRequest
     public function rules()
     {
         return [
-            'purview_name' => 'required|between:3,10',
+            'purview_name' => 'required|between:2,10',
             'pid' => 'required|integer|min:0',
             'name' => 'required|between:5,50',
         ];

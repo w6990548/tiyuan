@@ -8,6 +8,9 @@ import UserList from '../components/admin/auth/user/list';
 import RoleList from '../components/admin/auth/role/list';
 import PermissionList from '../components/admin/auth/Permission/list';
 
+// 设置模块
+import SystemSettingForm from '../components/admin/setting/system-setting-form';
+
 
 const routes = [
 	{ path: '/', component: login, name: 'login' },
@@ -35,6 +38,14 @@ const routes = [
 
 		]
 	},
+    // 设置模块
+    {
+        path: '/',
+        component: Home,
+        children: [
+            {path: 'system-setting', component: SystemSettingForm, name: 'SystemSettingForm'}
+        ]
+    }
 
 ]
 export default routes
