@@ -73,7 +73,11 @@ Route::prefix('admin')
             Route::get('leftmenu', 'Auth\PermissionsController@leftmenu');
 
             /**
-             * 设置
+             * 系统设置
              */
+            // 获取配置
+            Route::get('settings', 'SettingController@getAll');
+            // 保存配置
+            Route::post('settings/save', 'SettingController@save');
         });
     });
