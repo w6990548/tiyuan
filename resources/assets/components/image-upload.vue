@@ -24,14 +24,13 @@
 </template>
 
 <script>
-    // import ImgPreviewDialog from '../img/preview-dialog'
-    // import emitter from 'element-ui/src/mixins/emitter';
+
     /**
      * 多图片上传组件
      * 已完成功能:
      *  选项:
      *      value: 绑定的图片地址
-     *      action: 图片上传服务器地址, 默认为: '/pub/upload/index'
+     *      action: 图片上传服务器地址, 默认为: '/api/upload/image'
      *      width: 图片宽度
      *      height: 图片高度
      *      checkSize: 是否检查图片宽高 (宽高都传入时才有效)
@@ -78,26 +77,20 @@
                 previewImage: '',
             }
         },
-        computed: {
-
-        },
+        computed: {},
         methods: {
-            emitInput(){
-                let _this = this;
-                setTimeout(()=> {
-                    let value = [];
-                    this.fileList.forEach(item => {
-                        if (item.status == "success") {
-                            // 兼容回显时的 item.url
-                            value.push(item.response ? item.response.data.url : item.url);
-                        }
-                    });
-                    if (this.valueType === 'string') {
-                        value = value.join(',');
+            // 这个也完毕
+            emitInput() {
+                let value = [];
+                this.fileList.forEach(item => {
+                    if (item.status === "success") {
+                        // 兼容回显时的 item.url
+                        value.push(item.response ? item.response.data.url : item.url);
                     }
-                    _this.$emit('input', value);
-                    _this.$emit('uploadImage')
-                },1000)
+                });
+                value = value.join(',');
+                this.$emit('input', value);
+                this.$emit('uploadImage')
             },
             handlePreview(file) {
                 this.previewImage = file.url;
@@ -105,8 +98,10 @@
             },
             handleRemove(file, fileList) {
                 this.fileList = fileList;
+                this.emitInput();
                 this.$emit('remove');
             },
+            // 已验证完整
             handleUploadSuccess(res, file, fileList) {
                 if (res && res.code === 0) {
                     this.fileList = fileList;
@@ -161,16 +156,40 @@
                 this.$emit('error');
                 this.$emit('complete')
             },
+            // 已验证完整
+            initFileList() {
+                let value = [];
+                if (this.value) {
+                    value = this.value.split(',')
+                }
+
+                this.fileList.forEach((item, index) => {
+                    if (!value[index]) {
+                        this.fileList.splice(index, 1)
+                    } else {
+                        if (value[index] !== item.url) {
+                            this.fileList[index].url = value[index];
+                        }
+                    }
+                });
+
+                value.forEach((item, index) => {
+                    if (this.fileList[index] && this.fileList[index].url == item) return;
+                    this.fileList.push({
+                        url: item
+                    })
+                })
+            }
         },
         created() {
-
+            this.initFileList();
         },
         watch: {
-
+            value() {
+                this.initFileList()
+            }
         },
-        components: {
-
-        }
+        components: {}
     }
 </script>
 

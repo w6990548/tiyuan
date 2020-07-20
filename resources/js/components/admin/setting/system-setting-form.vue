@@ -1,5 +1,5 @@
 <template>
-    <page title="权限管理">
+    <page title="参数配置">
         <el-row type="flex" class="row-bg">
             <el-col :span="10">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm m-t-20">
@@ -13,10 +13,10 @@
                         <el-switch v-model="ruleForm.site_switch" active-text="开启" inactive-text="关闭"></el-switch>
                     </el-form-item>
                     <el-form-item label="logo" prop="admin_logo">
-                        <image-upload :limit="1" @uploadImage="uploadImage('ruleForm')" v-model="ruleForm.admin_logo"></image-upload>
+                        <image-upload :limit="2" @uploadImage="uploadImage('admin_logo')" v-model="ruleForm.admin_logo"/>
                     </el-form-item>
                     <el-form-item label="站长二维码" prop="site_qr_code">
-                        <image-upload :limit="1" @uploadImage="uploadImage('ruleForm')" v-model="ruleForm.site_qr_code"></image-upload>
+                        <image-upload :limit="1" @uploadImage="uploadImage('site_qr_code')" v-model="ruleForm.site_qr_code"/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="submitForm('ruleForm')">保 存</el-button>
@@ -64,25 +64,35 @@
             };
         },
         methods: {
-            uploadImage(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        return true;
-                    } else {
-                        return false;
+            getSettings() {
+                let _this = this;
+                api.get('settings').then(data => {
+                    for (let key in _this.ruleForm) {
+                        if (data.data.hasOwnProperty(key)) {
+                            _this.ruleForm[key] = data.data[key];
+                        }
                     }
-                });
+                    this.ruleForm = data.data;
+                })
+            },
+            uploadImage(formName) {
+                this.$refs.ruleForm.validateField(formName);
             },
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        console.log(this.ruleForm);
+                        api.post('/settings/save', this.ruleForm).then(() => {
+                            this.$message.success('保存成功');
+                            this.getSettings();
+                        })
                     } else {
-                        console.log('error submit!!');
                         return false;
                     }
                 });
             },
+        },
+        created() {
+            this.getSettings();
         }
     }
 </script>

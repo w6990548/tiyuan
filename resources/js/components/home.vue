@@ -3,16 +3,13 @@
         <el-header class="fl-el-header">
             <el-row type="flex" class="row-bg h-60" justify="space-between">
                 <el-col :span="2">
-                    <div class="demo-image__placeholder">
-                        <div class="block">
-                            <el-image style="width: 150px; height: 60px"
-                                      fit="contain"
-                                      src="https://cdn.learnku.com/uploads/images/202007/08/16257/YuwONvpOgY.png!large"/>
-                            <div slot="error" class="image-slot tx-c">
-                                <i class="el-icon-picture-outline"></i>
-                            </div>
+                    <el-image style="width: 150px; height: 60px; line-height: 60px;"
+                              fit="contain"
+                              src="https://cdn.learnku.com/uploads/images/202007/08/16257/YuwONvpOgY.png!large">
+                        <div slot="placeholder" class="image-slot">
+                            加载中<span class="dot">...</span>
                         </div>
-                    </div>
+                    </el-image>
                 </el-col>
                 <el-col :span="3">
                     <el-dropdown @command="handleSelect" placement="bottom">
