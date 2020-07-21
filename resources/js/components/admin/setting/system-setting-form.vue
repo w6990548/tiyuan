@@ -13,10 +13,15 @@
                         <el-switch v-model="ruleForm.site_switch" active-text="开启" inactive-text="关闭"></el-switch>
                     </el-form-item>
                     <el-form-item label="logo" prop="admin_logo">
-                        <image-upload :limit="2" @uploadImage="uploadImage('admin_logo')" v-model="ruleForm.admin_logo"/>
+                        <image-upload :limit="1" @uploadImage="uploadImage('admin_logo')" v-model="ruleForm.admin_logo"/>
                     </el-form-item>
                     <el-form-item label="站长二维码" prop="site_qr_code">
-                        <image-upload :limit="1" @uploadImage="uploadImage('site_qr_code')" v-model="ruleForm.site_qr_code"/>
+                        <image-upload
+                                :width="512"
+                                :height="512"
+                                :limit="1"
+                                @uploadImage="uploadImage('site_qr_code')"
+                                v-model="ruleForm.site_qr_code"/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="submitForm('ruleForm')">保 存</el-button>

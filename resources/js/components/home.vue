@@ -5,7 +5,7 @@
                 <el-col :span="2">
                     <el-image style="width: 150px; height: 60px; line-height: 60px;"
                               fit="contain"
-                              src="https://cdn.learnku.com/uploads/images/202007/08/16257/YuwONvpOgY.png!large">
+                              :src="settings.admin_logo">
                         <div slot="placeholder" class="image-slot">
                             加载中<span class="dot">...</span>
                         </div>
@@ -35,10 +35,23 @@
                         <router-view></router-view>
                     </el-col>
                 </el-main>
-                <el-footer>Footer</el-footer>
+                <el-footer>
+                    <div class="p-t-20">
+                        <el-link type="info" target="_blank" :href="settings.icp_url">{{ settings.icp_code }}</el-link>
+                        <el-link type="info" :underline="false">&nbsp;|&nbsp;</el-link>
+                        <el-popover
+                                placement="top-start"
+                                width="200"
+                                trigger="hover">
+                            <el-image :src="settings.site_qr_code" fit="scale-down"/>
+                            <el-link type="info" slot="reference">联系站长</el-link>
+                        </el-popover>
+                    </div>
+                </el-footer>
             </el-container>
         </el-container>
     </el-container>
+
 </template>
 
 <script>
@@ -48,6 +61,8 @@
         data() {
             return {
                 menu: [],
+                settings: [],
+                centerDialogVisible: false
             }
         },
         methods: {
@@ -77,9 +92,10 @@
             },
             getLeftMenu() {
                 api.get('/leftmenu').then(data => {
-                    this.menu = data.data;
+                    this.menu = data.data.leftmenu;
+                    this.settings = data.data.settings;
                 })
-            }
+            },
         },
         computed: {
             username() {
@@ -101,7 +117,6 @@
         background-color: rgb(84, 92, 100);
         font-size: 14px;
         color: rgb(255, 255, 255);
-        line-height: 60px;
     }
 
     .fl-el-header {

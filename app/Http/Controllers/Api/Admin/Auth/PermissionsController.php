@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\PermissionRequest;
 use App\Models\Permission as newPermission;
 use App\Services\Admin\PermissionService;
+use App\Services\Admin\SettingService;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use App\Result;
@@ -31,7 +32,7 @@ class PermissionsController extends Controller
     }
 
     /**
-     * 获取左侧导航菜单项
+     * 获取左侧导航菜单项 + 配置项
      * @author: FengLei
      * @time: 2020/7/7 18:38
      * @param Request $request
@@ -44,7 +45,12 @@ class PermissionsController extends Controller
             $tree = PermissionService::converLeftMenuToTree($tree, $request->user());
         }
 
-        return Result::success($tree);
+        $settings = SettingService::getValueBuKey('admin_logo', 'icp_code', 'icp_url', 'site_qr_code');
+
+        return Result::success([
+            'leftmenu' => $tree,
+            'settings' => $settings
+        ]);
     }
 
     /**

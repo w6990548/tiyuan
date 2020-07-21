@@ -22,7 +22,6 @@ const routes = [
             {path: '404', name: '404', component: ErrorPage},
 		]
 	},
-	{ path: '/welcome', name: welcome, component: welcome },
 	// 拦截所有无效页面到404
 	{ path: '*', redirect: '/404' },
 	{ path: '/', redirect: '/login' },

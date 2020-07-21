@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Result;
+use App\Services\Admin\SettingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -20,15 +21,7 @@ class SettingController extends Controller
      */
     public function getAll(Request $request)
     {
-        $settings = Cache::rememberForever('settings', function () {
-            $settings = Setting::all()->pluck('value', 'key');
-            foreach ($settings as $key => $value) {
-                if (in_array($key, Setting::SWITCH_LIST)) {
-                    $settings[$key] = (bool)$settings[$key];
-                }
-            }
-            return $settings;
-        });
+        $settings = SettingService::getAll();
         return Result::success($settings);
     }
 
