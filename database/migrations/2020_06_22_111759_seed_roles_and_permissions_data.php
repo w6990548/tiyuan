@@ -24,6 +24,11 @@ class SeedRolesAndPermissionsData extends Migration
         Permission::create(['guard_name' => 'api', 'name' => 'api/admin/users', 'purview_name' => '用户管理']);
         Permission::create(['guard_name' => 'api', 'name' => 'api/admin/roles', 'purview_name' => '角色管理']);
         Permission::create(['guard_name' => 'api', 'name' => 'api/admin/permissions', 'purview_name' => '权限管理']);
+        Permission::create(['guard_name' => 'api',
+            'name' => 'api/admin/permissions/create',
+            'purview_name' => '添加权限', 'pid' => 4,
+            'level' => 3,
+        ]);
 
         // 创建站长角色，并赋予权限
         $founder = Role::create(['guard_name' => 'api', 'name' => AdminUser::ADMIN]);
@@ -31,6 +36,7 @@ class SeedRolesAndPermissionsData extends Migration
         $founder->givePermissionTo('api/admin/users');
         $founder->givePermissionTo('api/admin/roles');
         $founder->givePermissionTo('api/admin/permissions');
+        $founder->givePermissionTo('api/admin/permissions/create');
 
         // 创建管理员角色，并赋予权限
         $maintainer = Role::create(['guard_name' => 'api', 'name' => 'guanliyuan']);

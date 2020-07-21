@@ -79,8 +79,10 @@ class PermissionService
     private static function compositeStructure($permission, $supPermission)
     {
         foreach ($permission as $item) {
-            if ($item->pid == $supPermission[$item->pid]->id) {
-                $supPermission[$item->pid]->children[] = $item;
+            if (isset($supPermission[$item->pid])) {
+                if ($item->pid == $supPermission[$item->pid]->id) {
+                    $supPermission[$item->pid]->children[] = $item;
+                }
             }
         }
         return $supPermission;

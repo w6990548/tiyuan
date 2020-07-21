@@ -35,12 +35,12 @@ class CheckAdminPermissions
         $user = Auth::guard('api')->user();
         if (!in_array($request->path(), $this->apiUrl)) {
             // 用户是否有站长权限
-            if (!$user->hasRole('zhanzhang')) {
+            // if (!$user->hasRole('zhanzhang')) {
                 // 用户是否有该权限
                 if (!$user->can($request->path())) {
                     throw new NoPermissionException('权限不足 '.$request->path());
                 }
-            }
+            // }
         }
         return $next($request);
     }
