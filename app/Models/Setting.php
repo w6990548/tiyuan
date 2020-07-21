@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property string key
  * @property string value
+ * @method static create(array $array)
  */
 
 class Setting extends Model
