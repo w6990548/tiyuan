@@ -9,9 +9,6 @@ Vue.use(VueRouter);
 import Vuex from 'vuex'
 Vue.use(Vuex);
 
-import store from '../assets/store';
-window.store = store;
-
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import '../assets/css/global.css'
@@ -62,7 +59,6 @@ router.beforeEach(({name}, from, next) => {
 new Vue({
 	el: '#app',
 	router,
-    store,
 	components: {App},
 	template: '<App/>',
 }).$mount('#app')
