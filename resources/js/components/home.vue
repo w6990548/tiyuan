@@ -67,7 +67,7 @@
         },
         methods: {
             logout() {
-                api.post('/logout').then(() => {
+                api.post('admin/logout').then(() => {
                     localStorage.removeItem('token');
                     this.$message.success('退出成功');
                     this.$router.push({
@@ -91,7 +91,7 @@
                 }
             },
             getLeftMenu() {
-                api.get('/leftmenu').then(data => {
+                api.get('admin/leftmenu').then(data => {
                     this.menu = data.data.leftmenu;
                     this.settings = data.data.settings;
                 })

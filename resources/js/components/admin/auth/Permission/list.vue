@@ -89,7 +89,7 @@
         },
         methods: {
             getList() {
-                api.get('/permissions').then(data => {
+                api.get('admin/permissions').then(data => {
                     this.tableData = data.data;
                     this.topPermissionData = data.data;
                 })
@@ -99,14 +99,14 @@
                 this.isAdd = true;
             },
             doAddPermissions(form) {
-                api.post('/permissions/create', form).then(data => {
+                api.post('admin/permissions/create', form).then(data => {
                     this.$message.success('添加成功');
                     this.isAdd = false;
                     this.getList();
                 })
             },
             doEditPermissions(form) {
-                api.post('/permissions/edit', form).then(data => {
+                api.post('admin/permissions/edit', form).then(data => {
                     this.$message.success('修改成功');
                     this.isEdit = false;
                     this.getList();
@@ -116,7 +116,7 @@
                 this.$confirm('确认删除该权限吗?', '提示', {
                     type: 'warning'
                 }).then(() => {
-                    api.post('/permissions/delete', {
+                    api.post('admin/permissions/delete', {
                         id: row.id,
                     }).then(data => {
                         this.$message.success('删除成功');

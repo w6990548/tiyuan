@@ -89,13 +89,13 @@
         computed: {},
         methods: {
             getList() {
-                api.get('/roles', this.query).then(data => {
+                api.get('admin/roles', this.query).then(data => {
                     this.tableData = data.data.list;
                     this.total = data.data.total;
                 })
             },
             getPermissions() {
-                api.get('/permissions').then(data => {
+                api.get('admin/permissions').then(data => {
                     this.permisionData = data.data;
                 });
             },
@@ -103,7 +103,7 @@
                 this.isAdd = true;
             },
             doAddRole(form) {
-                api.post('/roles/create', form).then(() => {
+                api.post('admin/roles/create', form).then(() => {
                     this.$message.success('添加成功');
                     this.isAdd = false;
                     this.getList();
@@ -119,7 +119,7 @@
                 }
             },
             doEditRole(form) {
-                api.post('/roles/edit', form).then(() => {
+                api.post('admin/roles/edit', form).then(() => {
                     this.$message.success('编辑成功');
                     this.isEdit = false;
                     this.getList();
@@ -129,7 +129,7 @@
                 this.$confirm('确认要删除该角色吗？', '确认', {
                     type: 'warning',
                 }).then(() => {
-                    api.post('/roles/delete', {
+                    api.post('admin/roles/delete', {
                         id: row.id
                     }).then(() => {
                         this.$message.success('删除成功');

@@ -60,7 +60,7 @@
             login(form) {
                 this.$refs[form].validate((valid) => {
                     if (valid) {
-                        api.get('/login', this.form).then(data => {
+                        api.get('admin/login', this.form).then(data => {
                             if (data.code === 0) {
                                 localStorage.setItem('token', 'Bearer' + data.data.token);
                                 localStorage.setItem('user', JSON.stringify(data.data.user_info));
@@ -76,14 +76,14 @@
                 })
             },
             info() {
-                api.get('/user').then(data => {
+                api.get('admin/user').then(data => {
                     if (data.code === 0) {
                         this.$message.success('获取用户信息成功');
                     }
                 })
             },
             logout() {
-                api.post('/logout').then(data => {
+                api.post('admin/logout').then(data => {
                     if (data.code === 0) {
                         localStorage.removeItem('token');
                         this.$message.success('退出成功');
@@ -91,7 +91,7 @@
                 })
             },
             captcha() {
-                api.post('/captchas', this.form).then(data => {
+                api.post('admin/captchas', this.form).then(data => {
                     if (data.code === 0) {
                         this.src = data.data.captcha_image;
                         this.form.captcha_key = data.data.captcha_key

@@ -102,7 +102,7 @@
         },
         methods: {
             getList() {
-                api.get('/users', this.query).then(data => {
+                api.get('admin/users', this.query).then(data => {
                     this.tableData = data.data.list;
                     this.roleData = data.data.roles;
                     this.total = data.data.total;
@@ -112,7 +112,7 @@
                 this.isAdd = true;
             },
             doAddUser(form) {
-                api.post('/users/create', form).then(() => {
+                api.post('admin/users/create', form).then(() => {
                     this.$message.success('添加成功');
                     this.isAdd = false;
                     this.getList();
@@ -124,7 +124,7 @@
                 this.rowData.role = row;
             },
             doEditUser(form) {
-                api.post('/users/edit', form).then(() => {
+                api.post('admin/users/edit', form).then(() => {
                     this.$message.success('修改成功');
                     this.isEdit = false;
                     this.getList();
@@ -136,7 +136,7 @@
                     inputPlaceholder: '请输入新密码'
                 }).then(({value}) => {
                     console.log(row,value);
-                    api.post('/users/reset', {
+                    api.post('admin/users/reset', {
                         id: row.id,
                         password: value,
                     }).then(() => {
@@ -150,7 +150,7 @@
                 this.$confirm('确认要删除该用户吗？', '确认', {
                     type: 'warning',
                 }).then(() => {
-                    api.post('/users/delete', {
+                    api.post('admin/users/delete', {
                         id: row.id
                     }).then(() => {
                         this.$message.success('删除成功');
