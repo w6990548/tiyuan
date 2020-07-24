@@ -45,7 +45,7 @@
      */
 
     export default {
-        name: "fl-editor",
+        name: "vmd-editor",
         props: {
             mode: {type: String, default: 'editable'},
             value: {type: String, default: ''},

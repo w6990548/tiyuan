@@ -75,14 +75,40 @@
                         {required: true, message: '请上传站长二维码'},
                     ],
                 },
-                text: "``` json\n" +
-                    "{\n" +
-                    "    \"key\": \"value\"\n" +
-                    "    \"key\": \"value\"\n" +
-                    "    \"key\": \"value\"\n" +
-                    "    \"key\": \"value\"\n" +
-                    "}\n" +
-                    "```",
+                text: "# 标题 1\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "\n" +
+                    "## 标题 2\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "\n" +
+                    "### 标题 3\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "\n" +
+                    "## 标题 2\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "\n" +
+                    "### 标题 3\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent\n" +
+                    "contentcontentcontent"
             };
         },
         methods: {

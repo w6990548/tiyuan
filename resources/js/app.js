@@ -32,7 +32,7 @@ import createTodoListPlugin from '@kangc/v-md-editor/lib/plugins/todo-list/index
 // v-md-editor 编辑器 高亮代码行 使用方式：``` js {1,3} ```
 // import createHighlightLinesPlugin from '@kangc/v-md-editor/lib/plugins/highlight-lines/index';
 // v-md-editor 编辑器 快捷复制代码
-import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
+// import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
 
 // v-md-editor 编辑器 多种代码高亮 git+go+java+json+php+python+regex+rust+sql
 import '../assets/prism/prism'
@@ -42,7 +42,7 @@ VueMarkdownEditor.use(createEmojiPlugin());
 VueMarkdownEditor.use(createTodoListPlugin());
 // VueMarkdownEditor.use(createLineNumbertPlugin());
 // VueMarkdownEditor.use(createHighlightLinesPlugin());
-VueMarkdownEditor.use(createCopyCodePlugin());
+// VueMarkdownEditor.use(createCopyCodePlugin());
 Vue.use(VueMarkdownEditor);
 VMdPreview.use(vuepressTheme);
 Vue.use(VMdPreview);
