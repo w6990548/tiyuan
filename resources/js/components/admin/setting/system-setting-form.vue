@@ -26,18 +26,10 @@
                                 v-model="ruleForm.site_qr_code"/>
                     </el-form-item>
                     <el-form-item label="v-md编辑器">
-                        <v-md-editor
-                                v-model="ruleForm.textArea"
-                                :disabled-menus="[]"
-                                height="400px"
-                                @upload-image="editorUploadImage"/>
+                        <vmd-editor :value="text" mode="preview"></vmd-editor>
                     </el-form-item>
                     <el-form-item label="v-md编辑器2">
-                        <v-md-editor
-                                v-model="ruleForm.textArea2"
-                                :disabled-menus="[]"
-                                height="400px"
-                                @upload-image="editorUploadImage"/>
+                        <vmd-editor :value="text"/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="submitForm('ruleForm')">保 存</el-button>
@@ -52,10 +44,11 @@
 <script>
 
     import ImageUpload from "../../../../assets/components/image-upload";
+    import VmdEditor from '../../../../assets/components/vmd-editor';
 
     export default {
         name: "system-setting-form",
-        components: {ImageUpload},
+        components: {ImageUpload, VmdEditor},
         data() {
             return {
                 ruleForm: {
@@ -64,8 +57,6 @@
                     site_switch: true, // 暂时关闭网站
                     admin_logo: '', // 管理后台logo
                     site_qr_code: '', // 站长二维码
-                    textArea: '',
-                    textArea2: '',
                 },
                 limit: 1,
                 rules: {
@@ -83,7 +74,15 @@
                     site_qr_code: [
                         {required: true, message: '请上传站长二维码'},
                     ],
-                }
+                },
+                text: "``` json\n" +
+                    "{\n" +
+                    "    \"key\": \"value\"\n" +
+                    "    \"key\": \"value\"\n" +
+                    "    \"key\": \"value\"\n" +
+                    "    \"key\": \"value\"\n" +
+                    "}\n" +
+                    "```",
             };
         },
         methods: {
@@ -98,36 +97,9 @@
                     this.ruleForm = data.data;
                 })
             },
+            // 单图或多图上传验证
             uploadImage(formName) {
                 this.$refs.ruleForm.validateField(formName);
-            },
-            // 编辑器上传本地图片
-            editorUploadImage(event, insertImage, file) {
-                // 限制图片
-                let imgTypes = ['image/png', 'image/jpeg', 'image/gif'];
-                const isLt2M = file[0].size / 1024 / 1024 < 2;
-                if (imgTypes.indexOf(file[0].type) < 0) {
-                    this.$message.error('只能上传 png、jpg、jpeg或gif类型的图片');
-                    return false;
-                }
-                if (!isLt2M) {
-                    this.$message.error('上传的图片不能大于2M');
-                    return false;
-                }
-
-                let config = {
-                    headers: {'Content-Type': 'multipart/form-data'}
-                };
-                let formData = new FormData();
-                formData.append('file', file[0]);
-                // 存储到七牛
-                api.post('upload/image', formData, config).then(data => {
-                    // 回显到编辑器中
-                    insertImage({
-                        url: data.data.url,
-                        desc: '',
-                    });
-                })
             },
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
