@@ -29,7 +29,7 @@
                         <vmd-editor :value="text" mode="preview"></vmd-editor>
                     </el-form-item>
                     <el-form-item label="v-md编辑器2">
-                        <vmd-editor :value="text"/>
+                        <vmd-editor :value="text" ref="editor"/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="submitForm('ruleForm')">保 存</el-button>

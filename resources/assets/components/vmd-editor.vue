@@ -10,6 +10,9 @@
             :left-toolbar="leftToolbar"
             :right-toolbar="rightToolbar"
             :toolbar="customizeToolbar"
+            @fullscreen-change="fullscreenChange"
+            @save="save"
+            @change="change"
             @copy-code-success="handleCopyCodeSuccess"
             @upload-image="editorUploadImage"/>
 </template>
@@ -29,13 +32,13 @@
          * right-toolbar：工具栏右侧，默认值： preview toc sync-scroll fullscreen
          * toolbar：自定义工具栏
      * Methods
-         * （待验证）focus：使编辑器聚焦
-         * （待验证）insert：参数：(getInsertContent: Function)，向编辑器中插入文本。
+         * focus：使编辑器聚焦
+         * insert：参数：(getInsertContent: Function)，向编辑器中插入文本。
      * Events
-         * （待验证）change：回调参数：(text, html)，内容变化时触发的事件。text 为输入的内容，html 为解析之后的 html 字符串。
-         * （待验证）save：回调参数：(text, html)，点击 save toolbar 时触发的事件。
-         * （待验证）fullscreen-change：回调参数：(isFullscreen)，切换全屏状态时触发的事件。
-         * （待验证）upload-image：回调参数：(event, insertImage)，toolbar 中使用上传图片之后，用户触发图片上传动作时会触发该事件（例如：选择图片上传，拖拽图片到编辑器中，截图后粘贴到编辑器中）。
+         * change：回调参数：(text, html)，内容变化时触发的事件。text 为输入的内容，html 为解析之后的 html 字符串。
+         * save：回调参数：(text, html)，点击 save toolbar 时触发的事件。
+         * fullscreen-change：回调参数：(isFullscreen)，切换全屏状态时触发的事件。
+         * upload-image：回调参数：(event, insertImage)，toolbar 中使用上传图片之后，用户触发图片上传动作时会触发该事件（例如：选择图片上传，拖拽图片到编辑器中，截图后粘贴到编辑器中）。
      *
      *
      *
@@ -101,6 +104,7 @@
                     });
                 })
             },
+            // 自定义工具栏插入提示
             insertTip(editor, type) {
                 editor.insert(function (selected) {
                     const prefix = '::: '+type+'\n';
@@ -114,8 +118,17 @@
                     };
                 });
             },
+            fullscreenChange() {
+                console.log('切换全屏回调');
+            },
+            save() {
+                console.log('工具栏保存按钮回调');
+            },
+            change() {
+                console.log('文本内容变化回调');
+            },
             handleCopyCodeSuccess(code) {
-                console.log(code);
+                console.log('代码快捷复制回调【'+code+'】');
             },
         },
         created() {
