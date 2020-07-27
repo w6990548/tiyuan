@@ -25,12 +25,6 @@
                                 @uploadImage="uploadImage('site_qr_code')"
                                 v-model="ruleForm.site_qr_code"/>
                     </el-form-item>
-                    <el-form-item label="v-md编辑器">
-                        <vmd-editor :value="text" mode="preview"></vmd-editor>
-                    </el-form-item>
-                    <el-form-item label="v-md编辑器2">
-                        <vmd-editor :value="text" ref="editor"/>
-                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="submitForm('ruleForm')">保 存</el-button>
                     </el-form-item>
@@ -75,40 +69,6 @@
                         {required: true, message: '请上传站长二维码'},
                     ],
                 },
-                text: "# 标题 1\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "\n" +
-                    "## 标题 2\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "\n" +
-                    "### 标题 3\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "\n" +
-                    "## 标题 2\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "\n" +
-                    "### 标题 3\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent\n" +
-                    "contentcontentcontent"
             };
         },
         methods: {

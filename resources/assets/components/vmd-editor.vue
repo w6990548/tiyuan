@@ -124,8 +124,9 @@
             save() {
                 console.log('工具栏保存按钮回调');
             },
-            change() {
-                console.log('文本内容变化回调');
+            change(value) {
+                // 内容改变时，回显内容
+                this.$emit('input', value);
             },
             handleCopyCodeSuccess(code) {
                 console.log('代码快捷复制回调【'+code+'】');

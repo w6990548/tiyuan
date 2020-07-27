@@ -11,6 +11,9 @@ import PermissionList from '../components/admin/auth/Permission/list';
 // 设置模块
 import SystemSettingForm from '../components/admin/setting/system-setting-form';
 
+// 文章模块
+import ArticleList from '../components/admin/article/list';
+
 
 const routes = [
 	{ path: '/', component: login, name: 'login' },
@@ -37,6 +40,7 @@ const routes = [
 
 		]
 	},
+
     // 设置模块
     {
         path: '/',
@@ -44,7 +48,16 @@ const routes = [
         children: [
             {path: 'system-setting', component: SystemSettingForm, name: 'SystemSettingForm'}
         ]
-    }
+    },
+
+    // 文章模块
+    {
+        path: '/',
+        component: Home,
+        children: [
+            {path: 'articles', component: ArticleList, name: 'ArticleList'}
+        ]
+    },
 
 ]
 export default routes
