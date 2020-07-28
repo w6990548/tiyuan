@@ -4,9 +4,12 @@ namespace App\Models;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Article extends Model
 {
+    use SoftDeletes;
+
     /**
      * 为数组 / JSON 序列化准备日期。
      *
@@ -22,7 +25,7 @@ class Article extends Model
     public function labels()
     {
         return $this->belongsToMany(
-            'article_labels',
+            'App\Models\ArticleLabel',
             'article_has_labels',
             'article_id',
             'label_id'

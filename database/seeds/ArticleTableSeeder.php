@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Article;
+use App\Models\ArticleLabel;
 use Illuminate\Database\Seeder;
 
 class ArticleTableSeeder extends Seeder
@@ -12,7 +13,8 @@ class ArticleTableSeeder extends Seeder
      */
     public function run()
     {
-        $article = factory(Article::class)->times(15)->make();
-        Article::insert($article->toArray());
+        factory(Article::class, 15)->create()->each(function ($article) {
+            $article->labels()->save(factory(ArticleLabel::class)->make());
+        });
     }
 }

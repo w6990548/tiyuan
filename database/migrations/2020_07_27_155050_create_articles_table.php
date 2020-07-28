@@ -17,7 +17,10 @@ class CreateArticlesTable extends Migration
             $table->id();
             $table->string('title', '50')->comment('文章标题');
             $table->text('content')->nullable()->comment('文章内容');
+            $table->boolean('is_top')->default(0)->comment('是否置顶 0-否 1-是');
+            $table->boolean('status')->default(1)->comment('0-下架 1-上架');
             $table->timestamps();
+            $table->softDeletes();
         });
         DB::statement("ALTER TABLE articles COMMENT '文章表'");
     }
