@@ -79,5 +79,15 @@ Route::prefix('admin')
             Route::get('settings', 'SettingController@getAll');
             // 保存配置
             Route::post('settings/save', 'SettingController@save');
+
+            /**
+             * 文章管理
+             */
+            // 文章列表
+            Route::get('articles', 'Article\ArticleController@index');
+            // 发布文章
+            Route::post('articles/create', 'Article\ArticleController@create');
+            // 删除文章
+            Route::post('articles/delete', 'Article\ArticleController@delete');
         });
     });

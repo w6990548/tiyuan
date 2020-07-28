@@ -37,11 +37,6 @@
             change(key, query) {
                 if (key !== this.$route.path) {
                     router.push({path: key, query: query})
-                } else {
-                    // 跳转到一个假路由，再跳转回来，以达到刷新局部组件效果
-                    let NewPage = "_empty" + "?time=" + new Date().getTime() / 500;
-                    this.$router.push(NewPage);
-                    this.$router.go(-1);
                 }
             },
         },
