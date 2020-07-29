@@ -1,41 +1,31 @@
 <template>
     <page title="文章列表">
         <div class="m-b-20">
-            <el-button type="primary" size="small">发布文章</el-button>
+            <el-button type="primary" size="small" @click="addArticle">发布文章</el-button>
         </div>
         <el-table
                 :data="tableData"
                 style="width: 100%"
-                row-key="id"
                 border
-                default-expand-all
-                ref="table"
-                :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+                ref="table">
             <el-table-column
-                    prop="purview_name"
+                    prop="id"
                     label="文章ID"
                     width="100">
-                <template slot-scope="scope">
-                    <el-tag size="medium" v-if="scope.row.level === 1" type="danger">{{ scope.row.purview_name }}</el-tag>
-                    <el-tag size="medium" v-if="scope.row.level === 2" type="warning">{{ scope.row.purview_name }}</el-tag>
-                    <el-tag size="medium" v-if="scope.row.level === 3">{{ scope.row.purview_name }}</el-tag>
-                </template>
             </el-table-column>
             <el-table-column
-                    prop="purview_name"
-                    label="文章标题">
-                <template slot-scope="scope">
-                    <el-tag size="medium" v-if="scope.row.level === 1" type="danger">{{ scope.row.purview_name }}</el-tag>
-                    <el-tag size="medium" v-if="scope.row.level === 2" type="warning">{{ scope.row.purview_name }}</el-tag>
-                    <el-tag size="medium" v-if="scope.row.level === 3">{{ scope.row.purview_name }}</el-tag>
-                </template>
+                    prop="title"
+                    label="文章标题"
+                    width="400"
+                    show-overflow-tooltip>
             </el-table-column>
-            <el-table-column
-                    prop="name"
-                    label="文章标签"
-                    >
+            <el-table-column label="文章标签">
                 <template slot-scope="scope">
-                    <el-tag size="medium" type="info">{{ scope.row.name }}</el-tag>
+                    <el-tag size="medium" class="m-r-5" type="warning"
+                            v-for="item in scope.row.labels"
+                            :key="item.id">
+                        {{ item.name }}
+                    </el-tag>
                 </template>
             </el-table-column>
             <el-table-column
@@ -43,22 +33,22 @@
                     label="发布时间"
                     width="200">
             </el-table-column>
-            <el-table-column label="操作" width="200">
+            <el-table-column label="操作" width="300">
                 <template slot-scope="scope">
-                    <el-button v-if="scope.row.level < 3"
-                               type="primary"
-                               size="mini"
-                               @click="openDialog('isAdd', scope.row)">添加子权限</el-button>
-                    <el-button
-                            size="mini"
-                            @click="openDialog('isEdit', scope.row)">编辑</el-button>
-                    <el-button
-                            size="mini"
-                            type="danger"
-                            @click="deletePermissions(scope.$index, scope.row)">删除</el-button>
+                    <el-button size="mini" @click="detail(scope.row)">查看</el-button>
+                    <el-button type="primary" size="mini" @click="openDialog('isEdit', scope.row)">编辑</el-button>
+                    <el-button type="danger" size="mini" @click="deleteArticle(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination class="fr m-t-20 p-d-0"
+                       background
+                       layout="prev, pager, next"
+                       @current-change="getList"
+                       :current-page.sync="query.page"
+                       :page-size="query.pageSize"
+                       :total="total">
+        </el-pagination>
     </page>
 </template>
 
@@ -68,8 +58,47 @@
         data(){
             return {
                 tableData: [],
+                total: 0,
+                query: {
+                    page: 1,
+                    pageSize: 10,
+                },
             }
         },
+        methods: {
+            getList() {
+                api.get('admin/articles', this.query).then(data => {
+                    this.tableData = data.data.list;
+                    this.total = data.data.total;
+                })
+            },
+            addArticle() {
+                this.$router.push('/articles/create');
+            },
+            detail(row) {
+                this.$router.push({
+                    path: '/articles/detail',
+                    query: row,
+                })
+            },
+            deleteArticle(index, row) {
+                this.$confirm('确认要删除该文章吗？', '确认', {
+                    type: 'warning',
+                }).then(() => {
+                    api.post('admin/articles/delete', {
+                        id: row.id
+                    }).then(() => {
+                        this.$message.success('删除成功');
+                        this.getList();
+                    })
+                }).catch(() => {
+
+                })
+            },
+        },
+        created() {
+            this.getList();
+        }
     }
 </script>
 

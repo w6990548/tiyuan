@@ -13,6 +13,8 @@ import SystemSettingForm from '../components/admin/setting/system-setting-form';
 
 // 文章模块
 import ArticleList from '../components/admin/article/list';
+import ArticleAdd from '../components/admin/article/add';
+import ArticleDetail from '../components/admin/article/detail';
 
 
 const routes = [
@@ -55,7 +57,9 @@ const routes = [
         path: '/',
         component: Home,
         children: [
-            {path: 'articles', component: ArticleList, name: 'ArticleList'}
+            {path: 'articles', component: ArticleList, name: 'ArticleList'},
+            {path: 'articles/create', component: ArticleAdd, name: 'ArticleAdd'},
+            {path: 'articles/detail', component: ArticleDetail, name: 'ArticleDetail'}
         ]
     },
 
