@@ -2,10 +2,10 @@
     <page title="文章详情" :breadcrumbs="{文章列表: '/articles'}">
         <el-card class="box-card w-1000 mg-auto">
             <div slot="header" class="clearfix tx-c">
-                <h3>{{data.title}}</h3>
-                <el-link :underline="false" type="info">发布于：{{data.created_at}}</el-link>
+                <h3>{{detail.title}}</h3>
+                <el-link :underline="false" type="info">发布于：{{detail.created_at}}</el-link>
             </div>
-            <vmd-editor height="auto" mode="preview" v-model="data.content"></vmd-editor>
+            <vmd-editor height="auto" mode="preview" :value="detail.content"></vmd-editor>
         </el-card>
     </page>
 </template>
@@ -16,12 +16,21 @@
         name: "detail",
         data() {
             return {
-                data: [],
+                preview: 'preview',
+                detail: {},
+            }
+        },
+        methods: {
+            getDetail() {
+                api.get('/admin/articles/detail', {
+                    id: this.$route.query.id
+                }).then(data => {
+                    this.detail = data.data;
+                })
             }
         },
         created() {
-            this.data = this.$route.query;
-            console.log(this.data);
+            this.getDetail();
         },
         components: {
             VmdEditor

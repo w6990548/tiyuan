@@ -78,7 +78,9 @@
             detail(row) {
                 this.$router.push({
                     path: '/articles/detail',
-                    query: row,
+                    query: {
+                        id: row.id
+                    },
                 })
             },
             deleteArticle(index, row) {

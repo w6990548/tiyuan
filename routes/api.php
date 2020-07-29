@@ -85,6 +85,8 @@ Route::prefix('admin')
              */
             // 文章列表
             Route::get('articles', 'Article\ArticleController@index');
+            // 文章详情
+            Route::get('articles/detail', 'Article\ArticleController@detail');
             // 发布文章
             Route::post('articles/create', 'Article\ArticleController@create');
             // 删除文章

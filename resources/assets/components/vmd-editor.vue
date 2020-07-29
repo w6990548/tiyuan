@@ -167,7 +167,9 @@
             }
         },
         watch: {
-
+            value() {
+                this.contents = this.value
+            }
         },
     }
 </script>

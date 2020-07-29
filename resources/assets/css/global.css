@@ -91,6 +91,9 @@ a {
 .w-1000 {
     width: 1000px !important;
 }
+.w-1200 {
+    width: 1200px !important;
+}
 .w-100p {
     width: 100% !important;
 }
@@ -377,6 +380,9 @@ a {
 }
 .tx-r {
     text-align: right;
+}
+.mg-auto {
+    margin: 0 auto;
 }
 
 .bg-wh {

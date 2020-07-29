@@ -29,6 +29,23 @@ class ArticleController extends Controller
     }
 
     /**
+     * 文章详情
+     * @author: FengLei
+     * @time: 2020/7/29 20:10
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function detail(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|numeric|exists:articles,id'
+        ]);
+        $article = Article::findOrFail($request->id);
+        return Result::success($article);
+    }
+
+    /**
      * 发布文章
      * @author: FengLei
      * @time: 2020/7/29 17:55
