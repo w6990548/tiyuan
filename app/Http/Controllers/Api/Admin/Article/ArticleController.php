@@ -41,7 +41,7 @@ class ArticleController extends Controller
         $this->validate($request, [
             'id' => 'required|numeric|exists:articles,id'
         ]);
-        $article = Article::findOrFail($request->id);
+        $article = Article::with('labels:id,name')->findOrFail($request->id);
         return Result::success($article);
     }
 
