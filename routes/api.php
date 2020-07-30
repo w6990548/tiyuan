@@ -83,13 +83,22 @@ Route::prefix('admin')
             /**
              * 文章管理
              */
+            /****************************** 文章管理 ******************************/
             // 文章列表
             Route::get('articles', 'Article\ArticleController@index');
             // 文章详情
             Route::get('articles/detail', 'Article\ArticleController@detail');
             // 发布文章
             Route::post('articles/create', 'Article\ArticleController@create');
+            // 编辑文章
+            Route::post('articles/edit', 'Article\ArticleController@edit');
+            // 文章置顶
+            Route::post('articles/changeStatus', 'Article\ArticleController@changeStatus');
             // 删除文章
             Route::post('articles/delete', 'Article\ArticleController@delete');
+
+            /****************************** 标签管理 ******************************/
+            // 标签列表
+            Route::get('labels', 'Article\ArticleLabelController@index');
         });
     });

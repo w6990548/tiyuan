@@ -30,19 +30,24 @@
             </el-table-column>
             <el-table-column
                     prop="is_top"
-                    label="置顶"
+                    label="是否置顶"
                     width="80">
                 <template slot-scope="scope">
-                    <el-switch v-model="scope.row.is_top" active-color="#13ce66"></el-switch>
+                    <el-switch v-model="scope.row.is_top"
+                               active-color="#13ce66"
+                               inactive-color="#ff4949"
+                               @change="changeStatus(scope.row)"></el-switch>
                 </template>
             </el-table-column>
             <el-table-column
                     prop="status"
-                    label="状态"
+                    label="上架"
                     width="80">
                 <template slot-scope="scope">
-                    <el-link type="success" :underline="false" v-if="scope.row.status">上架</el-link>
-                    <el-link type="danger" :underline="false" v-else>下架</el-link>
+                    <el-switch v-model="scope.row.status"
+                               active-color="#13ce66"
+                               inactive-color="#ff4949"
+                               @change="changeStatus(scope.row)"></el-switch>
                 </template>
             </el-table-column>
             <el-table-column
@@ -53,7 +58,7 @@
             <el-table-column label="操作" width="300">
                 <template slot-scope="scope">
                     <el-button size="mini" @click="detail(scope.row)">查看</el-button>
-                    <el-button type="primary" size="mini" @click="openDialog('isEdit', scope.row)">编辑</el-button>
+                    <el-button type="primary" size="mini" @click="editArticle(scope.row)">编辑</el-button>
                     <el-button type="danger" size="mini" @click="deleteArticle(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
@@ -95,6 +100,21 @@
             detail(row) {
                 this.$router.push({
                     path: '/articles/detail',
+                    query: {
+                        id: row.id
+                    },
+                })
+            },
+            changeStatus(row) {
+                api.post('/admin/articles/changeStatus', {
+                    id: row.id,
+                    is_top: row.is_top,
+                    status: row.status,
+                })
+            },
+            editArticle(row) {
+                this.$router.push({
+                    path: '/articles/edit',
                     query: {
                         id: row.id
                     },

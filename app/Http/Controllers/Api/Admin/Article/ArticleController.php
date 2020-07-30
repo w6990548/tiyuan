@@ -59,7 +59,24 @@ class ArticleController extends Controller
         $article->content = $request->contents;
         $article->save();
         // 保存标签到中间表
-        $article->labels()->syncWithoutDetaching($request->labels);
+        $article->labels()->sync($request->labels);
+        return Result::success();
+    }
+
+    /**
+     * 编辑文章
+     * @author: FengLei
+     * @time: 2020/7/30 17:44
+     * @param ArticleRequest $request
+     * @param Article $article
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit(ArticleRequest $request, Article $article)
+    {
+        $article = $article->findOrFail($request->id);
+        $article->update($request->all());
+        // 更新标签到中间表
+        $article->labels()->sync($request->labels);
         return Result::success();
     }
 
@@ -71,10 +88,24 @@ class ArticleController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function delete(Article $article, Request $request)
+    public function delete(Request $request)
     {
-        $article = $article->findOrFail($request->id);
+        $article = Article::findOrFail($request->id);
         $article->delete();
+        return Result::success();
+    }
+
+    /**
+     * 文章置顶、上下架
+     * @author: FengLei
+     * @time: 2020/7/30 14:43
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changeStatus(Request $request)
+    {
+        $article = Article::findOrFail($request->id);
+        $article->update($request->all());
         return Result::success();
     }
 }

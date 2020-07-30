@@ -8,11 +8,22 @@ class ArticleRequest extends FormRequest
 {
     public function rules()
     {
-        return [
-            'title' => 'required|string',
-            'contents' => 'nullable|string',
-            'labels' => 'nullable|distinct|exists:article_labels,id',
-        ];
+        // 有ID则为编辑
+        switch ($this->get('id')) {
+            case 0:
+                return [
+                    'title' => 'required|string',
+                    'contents' => 'nullable|string',
+                    'labels' => 'nullable|distinct|exists:article_labels,id',
+                ];
+                break;
+            default:
+                return [
+                    'title' => 'string',
+                    'contents' => 'nullable|string',
+                    'labels' => 'nullable|distinct|exists:article_labels,id',
+                ];
+        }
     }
 
     public function attributes()

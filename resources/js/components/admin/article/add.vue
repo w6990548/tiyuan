@@ -4,7 +4,7 @@
             <div slot="header" class="clearfix tx-c">
                 <h3>新建博文</h3>
             </div>
-            <add-article-form @save="save"></add-article-form>
+            <add-article-form @save="doAdd"></add-article-form>
         </el-card>
     </page>
 </template>
@@ -19,7 +19,7 @@
             }
         },
         methods: {
-            save(form) {
+            doAdd(form) {
                 api.post('admin/articles/create', form).then(() => {
                     this.$message.success('发布成功');
                     this.$router.push('/articles');

@@ -11,6 +11,12 @@ class Article extends Model
     use SoftDeletes;
 
     /**
+     * 可以被批量赋值的属性。
+     * @var array
+     */
+    protected $fillable = ['title', 'content', 'is_top', 'status'];
+
+    /**
      * 转换为原生属性
      * @var array
      */

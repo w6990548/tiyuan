@@ -20,7 +20,7 @@
                                 default-first-option
                                 placeholder="请选择文章标签" style="width: 100%">
                             <el-option
-                                    v-for="item in options"
+                                    v-for="item in labelOptions"
                                     :key="item.id"
                                     :label="item.name"
                                     :value="item.id">
@@ -41,6 +41,14 @@
     import VmdEditor from '../../../../assets/components/vmd-editor';
     export default {
         name: "article-form",
+        props: {
+            editData: {
+                type: Object,
+                default() {
+                    return {}
+                }
+            },
+        },
         data() {
             return {
                 form: {
@@ -48,16 +56,7 @@
                     contents: '',
                     labels: [],
                 },
-                options: [{
-                    id: 31,
-                    name: 'HTML'
-                }, {
-                    id: 32,
-                    name: 'CSS'
-                }, {
-                    id: 33,
-                    name: 'JavaScript'
-                }],
+                labelOptions: [],
                 rules: {
                     title: [
                         { required: true, message: '请输入标题', trigger: 'blur' },
@@ -73,10 +72,31 @@
                         this.$emit('save', this.form);
                     }
                 })
+            },
+            initForm(editData) {
+                this.form.id = editData.id;
+                this.form.title = editData.title;
+                this.form.contents = editData.content;
+                editData.labels.forEach(item => {
+                    this.form.labels.push(item.id);
+                })
+            },
+            getLables() {
+                api.get('/admin/labels').then(data => {
+                    this.labelOptions = data.data;
+                })
             }
+        },
+        created() {
+            this.getLables();
         },
         components: {
             VmdEditor
+        },
+        watch: {
+            editData() {
+                this.initForm(this.editData);
+            }
         }
     }
 </script>
