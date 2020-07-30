@@ -11,6 +11,15 @@ class Article extends Model
     use SoftDeletes;
 
     /**
+     * 转换为原生属性
+     * @var array
+     */
+    protected $casts = [
+        'is_top' => 'boolean',
+        'status' => 'boolean',
+    ];
+
+    /**
      * 为数组 / JSON 序列化准备日期。
      *
      * @param  \DateTimeInterface  $date

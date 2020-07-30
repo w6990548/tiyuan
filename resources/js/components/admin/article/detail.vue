@@ -6,7 +6,7 @@
                 <el-link :underline="false" type="info">发布于：{{detail.created_at}}</el-link>
             </div>
             <vmd-editor height="auto" mode="preview" :value="detail.content"></vmd-editor>
-            <el-row class="p-l-20 p-r-20 m-t-20 m-b-20" v-if="detail.labels.length > 0">
+            <el-row class="p-l-20 p-r-20 m-t-20 m-b-20" v-if="detail.labels && detail.labels.length > 0">
                 <i class="el-icon-coin m-r-10 fz-20 c-gray" style="vertical-align: middle;"></i>
                 <el-tag type="warning" class="m-r-5 m-b-5" v-for="item in detail.labels" :key="item.id">{{ item.name }}</el-tag>
             </el-row>

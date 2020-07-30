@@ -29,6 +29,23 @@
                 </template>
             </el-table-column>
             <el-table-column
+                    prop="is_top"
+                    label="置顶"
+                    width="80">
+                <template slot-scope="scope">
+                    <el-switch v-model="scope.row.is_top" active-color="#13ce66"></el-switch>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="status"
+                    label="状态"
+                    width="80">
+                <template slot-scope="scope">
+                    <el-link type="success" :underline="false" v-if="scope.row.status">上架</el-link>
+                    <el-link type="danger" :underline="false" v-else>下架</el-link>
+                </template>
+            </el-table-column>
+            <el-table-column
                     prop="created_at"
                     label="发布时间"
                     width="200">
