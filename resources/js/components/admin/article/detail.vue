@@ -1,6 +1,10 @@
 <template>
     <page title="文章详情" :breadcrumbs="{文章列表: '/articles'}">
-        <el-card class="box-card w-1000 mg-auto">
+        <el-card class="box-card w-1000 mg-auto"
+                 v-loading="loading"
+                 element-loading-text="拼命加载中"
+                 element-loading-spinner="el-icon-loading"
+                 element-loading-background="rgba(0, 0, 0, 0.50)">
             <div slot="header" class="clearfix tx-c">
                 <h3>{{detail.title}}</h3>
                 <el-link :underline="false" type="info">发布于：{{detail.created_at}}</el-link>
@@ -23,14 +27,17 @@
             return {
                 preview: 'preview',
                 detail: {},
+                loading: false,
             }
         },
         methods: {
             getDetail() {
+                this.loading = true;
                 api.get('/admin/articles/detail', {
                     id: this.$route.query.id
                 }).then(data => {
                     this.detail = data.data;
+                    this.loading = false;
                 })
             }
         },
