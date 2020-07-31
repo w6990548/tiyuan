@@ -35,7 +35,6 @@
                 <template slot-scope="scope">
                     <el-switch v-model="scope.row.is_top"
                                active-color="#13ce66"
-                               inactive-color="#ff9090"
                                @change="changeStatus(scope.row)"></el-switch>
                 </template>
             </el-table-column>
@@ -46,7 +45,6 @@
                 <template slot-scope="scope">
                     <el-switch v-model="scope.row.status"
                                active-color="#13ce66"
-                               inactive-color="#ff9090"
                                @change="changeStatus(scope.row)"></el-switch>
                 </template>
             </el-table-column>

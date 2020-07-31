@@ -8,18 +8,19 @@ class UserRequest extends FormRequest
 {
     public function rules()
     {
-        // 有ID则为编辑
-        switch ($this->get('id')) {
-            case 0:
+        switch ($this->route()->uri) {
+            case 'api/admin/users/create':
                 return [
                     'username' => 'required|between:3,10|unique:admin_users,username',
                     'password' => 'required|between:6,18|alpha_dash',
                 ];
                 break;
-            default:
+            case 'api/admin/users/edit':
                 return [
-                    'username' => 'between:3,10|unique:admin_users,username,'.$this->get('id').',id',
+                    'id' => 'required|integer|min:0',
+                    'username' => 'required|between:3,10|unique:admin_users,username,'.$this->get('id'),
                 ];
+                break;
         }
     }
 

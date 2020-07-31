@@ -8,21 +8,20 @@ class ArticleRequest extends FormRequest
 {
     public function rules()
     {
-        // 有ID则为编辑
-        switch ($this->get('id')) {
-            case 0:
-                return [
-                    'title' => 'required|string',
-                    'contents' => 'nullable|string',
-                    'labels' => 'nullable|distinct|exists:article_labels,id',
-                ];
+        $rules = [
+            'title' => 'required|string',
+            'contents' => 'nullable|string',
+            'labels' => 'nullable|distinct|exists:article_labels,id',
+        ];
+
+        switch ($this->route()->uri) {
+            case 'api/admin/articles/create':
+                return $rules;
                 break;
-            default:
-                return [
-                    'title' => 'string',
-                    'contents' => 'nullable|string',
-                    'labels' => 'nullable|distinct|exists:article_labels,id',
-                ];
+            case 'api/admin/articles/edit':
+                $rules['id'] = 'required|integer|min:0';
+                return $rules;
+                break;
         }
     }
 

@@ -31,7 +31,7 @@
             </el-form-item>
             <el-form-item label-width="0">
                 <el-button size="medium" type="primary" icon="el-icon-s-promotion" @click="save('form')">发布文章</el-button>
-                <el-button size="medium" icon="el-icon-s-promotion" @click="">保存草稿</el-button>
+                <el-button size="medium" icon="el-icon-s-promotion" @click="draft('form')">保存草稿</el-button>
             </el-form-item>
         </el-form>
     </el-row>
@@ -72,6 +72,9 @@
                         this.$emit('save', this.form);
                     }
                 })
+            },
+            draft(form) {
+                console.log('暂时不能保存草稿哦');
             },
             initForm(editData) {
                 this.form.id = editData.id;
