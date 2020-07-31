@@ -2,12 +2,10 @@
     <el-container>
         <el-header class="fl-el-header">
             <el-row type="flex" class="row-bg h-60" justify="space-between">
-                <el-col :span="2">
-                    <el-image style="width: 150px; height: 60px; line-height: 60px;"
-                              fit="contain"
-                              :src="settings.admin_logo">
-                        <div slot="placeholder" class="image-slot">
-                            加载中<span class="dot">...</span>
+                <el-col :span="2" class="tx-c">
+                    <el-image class="w-150 h-60" :src="settings.admin_logo" fit="contain">
+                        <div slot="error" class="image-slot">
+                            <i class="el-icon-picture-outline"></i>
                         </div>
                     </el-image>
                 </el-col>
