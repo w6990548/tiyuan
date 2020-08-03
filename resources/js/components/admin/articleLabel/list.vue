@@ -7,7 +7,7 @@
                     v-for="item in dynamicTags"
                     closable
                     :disable-transitions="false"
-                    @close="deleteTag(item)" class="m-b-10">
+                    @close="deleteTag(item)" class="m-r-10 m-b-10">
                 {{item.name}}
             </el-tag>
 
@@ -55,10 +55,6 @@
             },
             initForm() {
                 let inputValue = this.inputValue;
-                if (!inputValue) {
-                    this.$message.error('标签不能为空');
-                    return false;
-                }
                 if (inputValue.length > 10) {
                     this.$message.error('标签长度必须介于 1 - 10 个字符之间');
                     return false;
@@ -95,12 +91,7 @@
 </script>
 
 <style scoped>
-    .el-tag + .el-tag {
-        margin-left: 10px;
-    }
-
     .button-new-tag {
-        margin-left: 10px;
         height: 32px;
         line-height: 30px;
         padding-top: 0;
@@ -109,7 +100,7 @@
 
     .input-new-tag {
         width: 90px;
-        margin-left: 10px;
+        margin-right: 10px;
         vertical-align: middle;
     }
 </style>
