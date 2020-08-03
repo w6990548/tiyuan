@@ -9,7 +9,7 @@ class ArticleLabelRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|between:1,10'
+            'name' => 'required|between:1,10|unique:article_labels,name'
         ];
     }
 
