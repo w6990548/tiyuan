@@ -14,6 +14,7 @@
         "gregwar/captcha": "^1.1",
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^7.22",
+        "laravel/scout": "^8.1",
         "laravel/tinker": "^2.0",
         "overtrue/laravel-filesystem-qiniu": "^1.0",
         "overtrue/laravel-lang": "^3.0",

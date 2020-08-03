@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
 	    \Debugbar::disable();
+        Schema::defaultStringLength(191);
 	    DB::listen(function($query) {
 		    $tmp = str_replace('?', '"'.'%s'.'"', $query->sql);
 		    $tmp = vsprintf($tmp, $query->bindings);
