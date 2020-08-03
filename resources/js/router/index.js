@@ -17,6 +17,9 @@ import ArticleAdd from '../components/admin/article/add';
 import ArticleEdit from '../components/admin/article/edit';
 import ArticleDetail from '../components/admin/article/detail';
 
+// 标签模块
+import ArticleLabelList from '../components/admin/articleLabel/list';
+
 
 const routes = [
 	{ path: '/', component: login, name: 'login' },
@@ -62,6 +65,15 @@ const routes = [
             {path: 'articles/create', component: ArticleAdd, name: 'ArticleAdd'},
             {path: 'articles/edit', component: ArticleEdit, name: 'ArticleEdit'},
             {path: 'articles/detail', component: ArticleDetail, name: 'ArticleDetail'}
+        ]
+    },
+
+    // 标签模块
+    {
+        path: '/',
+        component: Home,
+        children: [
+            {path: 'labels', component: ArticleLabelList, name: 'ArticleLabelList'},
         ]
     },
 

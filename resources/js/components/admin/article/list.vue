@@ -21,7 +21,7 @@
             </el-table-column>
             <el-table-column label="文章标签">
                 <template slot-scope="scope">
-                    <el-tag size="medium" class="m-r-5" type="warning"
+                    <el-tag size="medium" class="m-r-5 m-b-5" type="warning"
                             v-for="item in scope.row.labels"
                             :key="item.id">
                         {{ item.name }}

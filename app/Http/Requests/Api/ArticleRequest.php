@@ -9,7 +9,7 @@ class ArticleRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'title' => 'required|string',
+            'title' => 'required|string|between:5,50',
             'contents' => 'nullable|string',
             'labels' => 'nullable|distinct|exists:article_labels,id',
         ];

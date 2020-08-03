@@ -100,5 +100,9 @@ Route::prefix('admin')
             /****************************** 标签管理 ******************************/
             // 标签列表
             Route::get('labels', 'Article\ArticleLabelController@index');
+            // 添加标签
+            Route::post('labels/create', 'Article\ArticleLabelController@create');
+            // 删除标签
+            Route::post('labels/delete', 'Article\ArticleLabelController@delete');
         });
     });

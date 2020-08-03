@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class ArticleLabel extends Model
 {
     /**
+     * 可以被批量赋值的属性。
+     * @var array
+     */
+    protected $fillable = ['name'];
+
+    /**
      * 为数组 / JSON 序列化准备日期。
      *
      * @param  \DateTimeInterface  $date
