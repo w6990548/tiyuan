@@ -28,11 +28,17 @@ class AppServiceProvider extends ServiceProvider
     {
 	    \Debugbar::disable();
         Schema::defaultStringLength(191);
-	    DB::listen(function($query) {
-		    $tmp = str_replace('?', '"'.'%s'.'"', $query->sql);
-		    $tmp = vsprintf($tmp, $query->bindings);
-		    $tmp = str_replace("\\","",$tmp);
-		    Log::info('执行时间: '.$query->time.'ms; '.$tmp.PHP_EOL);
-	    });
+        // 开启数据库操作记录
+        DB::enableQueryLog();
+        // 非生产环境 记录数据库操作日志
+        if(!app()->environment('production')){
+            DB::listen(function ($query) {
+                Log::channel('query')->debug('sql listen', [
+                    'sql' => $query->sql,
+                    'bindings' => $query->bindings,
+                    'time' => $query->time.'ms',
+                ]);
+            });
+        }
     }
 }
