@@ -14,15 +14,17 @@ class SyncOneArticleToES implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $article;
+    protected $operation;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Article $article)
+    public function __construct(Article $article, $operation)
     {
         $this->article = $article;
+        $this->operation = $operation;
     }
 
     /**
@@ -32,11 +34,15 @@ class SyncOneArticleToES implements ShouldQueue
      */
     public function handle()
     {
+        // 获取 Elasticsearch 对象
+        $es = app('es');
         $data = $this->article->toESArray();
-        app('es')->index([
-            'index' => 'articles',
-            'id' => $data['id'],
-            'body' => $data,
-        ]);
+
+        if ($this->operation === 'delete') {
+            $es->delete(['index' => 'articles', 'id' => $data['id'],]);
+        } else {
+            // 同步数据到 Elasticsearch
+            $es->index(['index' => 'articles', 'id' => $data['id'], 'body' => $data,]);
+        }
     }
 }

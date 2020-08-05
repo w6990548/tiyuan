@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin\Article;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ArticleRequest;
+use App\Jobs\SyncOneArticleToES;
 use App\Models\Article;
 use App\Result;
 use Illuminate\Http\Request;
@@ -60,6 +61,8 @@ class ArticleController extends Controller
         $article->save();
         // 保存标签到中间表
         $article->labels()->sync($request->labels);
+        // 同步数据到 Elasticsearch
+        $this->dispatch(new SyncOneArticleToES($article, 'create'));
         return Result::success();
     }
 
@@ -77,6 +80,8 @@ class ArticleController extends Controller
         $article->update($request->all());
         // 更新标签到中间表
         $article->labels()->sync($request->labels);
+        // 同步数据到 Elasticsearch
+        $this->dispatch(new SyncOneArticleToES($article, 'update'));
         return Result::success();
     }
 
@@ -92,6 +97,8 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($request->id);
         $article->delete();
+        // 同步数据到 Elasticsearch
+        $this->dispatch(new SyncOneArticleToES($article, 'delete'));
         return Result::success();
     }
 
@@ -106,6 +113,8 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($request->id);
         $article->update($request->all());
+        // 同步数据到 Elasticsearch
+        $this->dispatch(new SyncOneArticleToES($article, 'update'));
         return Result::success();
     }
 }
