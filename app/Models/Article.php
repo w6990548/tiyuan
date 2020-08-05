@@ -5,6 +5,7 @@ namespace App\Models;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 
 class Article extends Model
 {
@@ -45,5 +46,23 @@ class Article extends Model
             'article_id',
             'label_id'
         );
+    }
+
+    public function toESArray()
+    {
+        $arr = Arr::only($this->toArray(), [
+            'id',
+            'title',
+            'content',
+            'is_top',
+            'status',
+            'created_at'
+        ]);
+
+        $arr['labels'] = $this->labels->map(function (ArticleLabel $articleLabel) {
+            return Arr::only($articleLabel->toArray(), ['id', 'name']);
+        });
+
+        return $arr;
     }
 }
