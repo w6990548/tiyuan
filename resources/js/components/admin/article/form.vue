@@ -79,7 +79,7 @@
             initForm(editData) {
                 this.form.id = editData.id;
                 this.form.title = editData.title;
-                this.form.contents = editData.content ? editData.contents : '';
+                this.form.contents = editData.content ? editData.content : '';
                 editData.labels.forEach(item => {
                     this.form.labels.push(item.id);
                 })
