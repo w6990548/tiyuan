@@ -22,10 +22,12 @@ class ArticleController extends Controller
     {
         $articles = Article::with('labels')
             ->orderByDesc('created_at')
-            ->paginate($request->pageSize);
+            ->skip($request->pageSize * ($request->page - 1))
+            ->take($request->pageSize)
+            ->get();
+
         return Result::success([
-            'list' => $articles->items(),
-            'total' => $articles->total(),
+            'list' => $articles,
         ]);
     }
 

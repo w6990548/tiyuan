@@ -150,6 +150,10 @@
                 this.$confirm('确认要删除该用户吗？', '确认', {
                     type: 'warning',
                 }).then(() => {
+                    // 删除当前页最后一条数据后，加载前一页的数据
+                    if (this.query.page > 1 && this.tableData.length <= 1) {
+                        this.query.page--;
+                    }
                     api.post('admin/users/delete', {
                         id: row.id
                     }).then(() => {

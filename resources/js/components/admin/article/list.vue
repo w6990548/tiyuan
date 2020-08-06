@@ -125,6 +125,10 @@
                     api.post('admin/articles/delete', {
                         id: row.id
                     }).then(() => {
+                        // 删除当前页最后一条数据后，加载前一页的数据
+                        if (this.query.page > 1 && this.tableData.length <= 1) {
+                            this.query.page--;
+                        }
                         this.$message.success('删除成功');
                         this.getList();
                     })
