@@ -83,7 +83,7 @@ class ArticleController extends Controller
     public function create(ArticleRequest $request, Article $article)
     {
         $article->title = $request->title;
-        $article->content = $request->contents;
+        $article->content = $request->content;
         $article->save();
         // 保存标签到中间表
         $article->labels()->sync($request->labels);

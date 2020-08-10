@@ -4,8 +4,8 @@
             <el-form-item prop="title">
                 <el-input v-model="form.title" maxlength="50" placeholder="标题" autocomplete="off"/>
             </el-form-item>
-            <el-form-item prop="contents">
-                <vmd-editor v-model="form.contents" height="600px" placeholder="请使用 markdown 语法"></vmd-editor>
+            <el-form-item prop="content">
+                <vmd-editor v-model="form.content" height="600px" placeholder="请使用 markdown 语法"></vmd-editor>
             </el-form-item>
             <el-form-item>
                 <el-collapse accordion class="bor-ra-5 p-l-20 p-r-20" style="border: 1px solid #EBEEF5;">
@@ -53,7 +53,7 @@
             return {
                 form: {
                     title: '',
-                    contents: '',
+                    content: '',
                     labels: [],
                 },
                 labelOptions: [],
@@ -79,7 +79,7 @@
             initForm(editData) {
                 this.form.id = editData.id;
                 this.form.title = editData.title;
-                this.form.contents = editData.content ? editData.content : '';
+                this.form.content = editData.content ? editData.content : '';
                 editData.labels.forEach(item => {
                     this.form.labels.push(item.id);
                 })
