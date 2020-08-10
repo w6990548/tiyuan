@@ -3,7 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\Setting;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class SettingService
 {
@@ -15,7 +15,8 @@ class SettingService
      */
     public static function getAll()
     {
-        $settings = Cache::rememberForever('settings', function () {
+        $settings = Redis::get('settings');
+        if (empty($settings)) {
             $settings = collect();
             Setting::all()->each(function ($item) use ($settings) {
                 if (in_array($item->key, Setting::SWITCH_LIST)) {
@@ -23,8 +24,10 @@ class SettingService
                 }
                 $settings->put($item->key, $item->value);
             });
-            return $settings;
-        });
+            Redis::set('settings', json_encode($settings));
+        } else {
+            $settings = collect(json_decode($settings));
+        }
 
         return $settings;
     }

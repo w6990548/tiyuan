@@ -7,8 +7,8 @@ use App\Models\Setting;
 use App\Result;
 use App\Services\Admin\SettingService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class SettingController extends Controller
 {
@@ -36,7 +36,7 @@ class SettingController extends Controller
     {
         DB::transaction(function () use ($request) {
             $settings = Setting::all()->keyBy('key');
-
+            Redis::del('settings');
             foreach ($request->all() as $key => $value) {
                 if (isset($settings[$key])) {
                     if ($settings[$key]->value <> $value) {
@@ -45,10 +45,8 @@ class SettingController extends Controller
                 } else {
                     Setting::create(['key' => $key, 'value' => $value]);
                 }
+                Redis::set('settings:'.$key, $value);
             }
-
-            Cache::forget('settings');
-            Cache::forget('settings:'.$key);
         });
 
         return Result::success();
