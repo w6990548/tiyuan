@@ -22,32 +22,30 @@ class ArticleController extends Controller
     public function index(Request $request)
     {
         // 返回有序集 key 中，指定区间内的成员。
-        // 其中成员的位置按 score 值递减(从大到小)来排列
-        $articles = Redis::zRevRange(
-            'articles',
+        // 其中成员的位置按 score值（created_at）递减(从大到小)来排列
+        $articleIds = Redis::zRevRange(
+            'articles_ids',
             $request->pageSize * ($request->page - 1),
             $request->page * $request->pageSize - 1,
             'WITHSCORES'
         );
         // 返回有序集 key 的基数
-        $total = Redis::zCard('articles');
+        $total = Redis::zCard('articles_ids');
 
-        if ($articles) {
-            foreach ($articles as &$article) {
-                $article = json_decode($article);
-            }
-            // 将多维数组中数组的值取出平铺为一维数组
-            $articles = Arr::flatten($articles);
+        $query = Article::with('labels')->orderByDesc('created_at');
+
+        if ($articleIds) {
+            $articles = $query->whereIn('id', $articleIds)->get();
         } else {
-            $articles = Article::with('labels')
-                ->orderByDesc('id')
-                ->skip($request->pageSize * ($request->page - 1))
+            $articles = $query->skip($request->pageSize * ($request->page - 1))
                 ->take($request->pageSize)
                 ->get();
 
-            foreach ($articles as $article) {
-                // 将要给或多个 member 元素及其 score 值加入到有序集 key 中
-                Redis::zAdd('articles', $article->id, json_encode($article));
+            if ($articles) {
+                foreach ($articles as $article) {
+                    // 将要给或多个 member 元素及其 score 值加入到有序集 key 中
+                    Redis::zAdd('articles_ids', strtotime($article->created_at), $article->id);
+                }
             }
         }
 
@@ -91,7 +89,7 @@ class ArticleController extends Controller
         $article->labels()->sync($request->labels);
 
         // 同步数据到 redis 中
-        Redis::zAdd('articles', $article->id, json_encode($article));
+        Redis::zAdd('articles_ids', strtotime($article->created_at), $article->id);
 
         // 同步数据到 Elasticsearch
         // $this->dispatch(new SyncOneArticleToES($article, 'create'));
@@ -112,10 +110,6 @@ class ArticleController extends Controller
         $article->update($request->all());
         // 更新标签到中间表
         $article->labels()->sync($request->labels);
-
-        // 同步数据到 redis 中
-        Redis::zAdd('articles', $article->id, json_encode($article));
-
         // 同步数据到 Elasticsearch
         // $this->dispatch(new SyncOneArticleToES($article, 'update'));
         return Result::success();
@@ -135,7 +129,7 @@ class ArticleController extends Controller
         $article->delete();
 
         // 从 redis 中移除该文章
-        Redis::zRem('articles', $article->id);
+        Redis::zRem('articles_ids', $article->id);
 
         // 同步数据到 Elasticsearch
         // $this->dispatch(new SyncOneArticleToES($article, 'delete'));
@@ -153,10 +147,6 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($request->id);
         $article->update($request->all());
-
-        // 同步数据到 redis 中
-        Redis::zAdd('articles', $article->id, json_encode($article));
-
         // 同步数据到 Elasticsearch
         // $this->dispatch(new SyncOneArticleToES($article, 'update'));
         return Result::success();

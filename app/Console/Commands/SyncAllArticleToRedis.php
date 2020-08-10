@@ -20,7 +20,7 @@ class SyncAllArticleToRedis extends Command
      *
      * @var string
      */
-    protected $description = '将文章数据同步到redis中';
+    protected $description = '将所有文章ID同步到redis中';
 
     /**
      * Create a new command instance.
@@ -40,10 +40,10 @@ class SyncAllArticleToRedis extends Command
     public function handle()
     {
         Article::with('labels')
-            ->chunk(100, function ($articles) {
+            ->chunk(10000, function ($articles) {
                 foreach ($articles as $article) {
                     // 将要给或多个 member 元素及其 score 值加入到有序集 key 中
-                    Redis::zAdd('articles', $article->id, json_encode($article));
+                    Redis::zAdd('articles_ids', strtotime($article->created_at), $article->id);
                     $this->info('正在同步 ID 为 '.$article->id.' 的文章');
                 }
             });
