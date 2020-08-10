@@ -64,7 +64,7 @@
             disabledMenus: {type: Array, default: () => []},
             leftToolbar: {
                 type: String,
-                default: 'undo redo clear | h bold italic strikethrough quote | ul ol table hr | link image code | emoji todo-list prompt | save'
+                default: 'undo redo clear | h bold italic strikethrough quote | ul ol table hr | link image imageWh code | emoji todo-list prompt | save'
             },
             rightToolbar: {type: String, default: 'preview toc sync-scroll fullscreen'},
             toolbar: {type: Object, default: () => {}}
@@ -163,6 +163,21 @@
                             },
                         },
                     ],
+                },
+            }
+            _this.customizeToolbar = {
+                imageWh: {
+                    title: '图片链接尾部添加该属性可控制图片宽高',
+                    icon: 'el-icon-crop',
+                    action(editor) {
+                        editor.insert(function (selected) {
+                            const content = '{{{width="100" height="100"}}}';
+                            return {
+                                text: `${content}`,
+                                selected: content,
+                            };
+                        });
+                    },
                 },
             }
         },
