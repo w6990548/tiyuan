@@ -17,14 +17,16 @@ class SettingService
     {
         $settings = Redis::get('settings');
         if (empty($settings)) {
-            $settings = collect();
-            Setting::all()->each(function ($item) use ($settings) {
-                if (in_array($item->key, Setting::SWITCH_LIST)) {
-                    $item->value = (bool)$item->value;
-                }
-                $settings->put($item->key, $item->value);
-            });
-            Redis::set('settings', json_encode($settings));
+            $settings = Setting::all();
+            if ($settings->isNotEmpty()) {
+                $settings->each(function ($item) use ($settings) {
+                    if (in_array($item->key, Setting::SWITCH_LIST)) {
+                        $item->value = (bool)$item->value;
+                    }
+                    $settings->put($item->key, $item->value);
+                });
+                Redis::set('settings', json_encode($settings));
+            }
         } else {
             $settings = collect(json_decode($settings));
         }
