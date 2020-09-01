@@ -3,6 +3,7 @@
 use App\Models\Article;
 use App\Models\ArticleLabel;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Redis;
 
 class ArticleTableSeeder extends Seeder
 {
@@ -13,13 +14,12 @@ class ArticleTableSeeder extends Seeder
      */
     public function run()
     {
+        Redis::del('articles_ids');
         // 填充文章带标签
-        // factory(Article::class, 500)->create()->each(function ($article) {
-        //     $article->labels()->save(factory(ArticleLabel::class)->make());
-        // });
-
-        // 只填充文章
-        $user = factory(Article::class)->times(20000)->make();
-        Article::insert($user->toArray());
+        factory(Article::class, 50)->create()->each(function ($article) {
+            // 同步数据到 redis 中
+            Redis::zAdd('articles_ids', strtotime($article->created_at), $article->id);
+            $article->labels()->save(factory(ArticleLabel::class)->make());
+        });
     }
 }

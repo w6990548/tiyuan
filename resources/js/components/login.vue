@@ -64,8 +64,11 @@
                             if (data.code === 0) {
                                 localStorage.setItem('token', 'Bearer' + data.data.token);
                                 localStorage.setItem('user', JSON.stringify(data.data.user_info));
-                                this.$message.success('登录成功');
-                                this.$router.push({
+                                this.$notify.success({
+                                    title: '成功',
+                                    message: '登陆成功'
+                                });
+                                router.push({
                                     path: 'welcome'
                                 });
                             }
@@ -86,7 +89,11 @@
                 api.post('admin/logout').then(data => {
                     if (data.code === 0) {
                         localStorage.removeItem('token');
-                        this.$message.success('退出成功');
+                        localStorage.removeItem('user');
+                        this.$notify.success({
+                            title: '成功',
+                            message: '退出成功',
+                        });
                     }
                 })
             },

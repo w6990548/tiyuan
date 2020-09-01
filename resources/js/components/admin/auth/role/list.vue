@@ -1,51 +1,55 @@
 <template>
     <page title="角色管理">
         <div class="m-b-20">
-            <el-button type="primary" size="small" @click="addRole">添加角色</el-button>
+            <el-button type="primary" size="small" @click="operateRole('addTitle')">添加角色</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%" border>
-            <el-table-column type="expand">
+            <el-table-column
+                label="ID"
+                width="180" prop="id">
+            </el-table-column>
+            <el-table-column
+                label="标识"
+                width="180">
                 <template slot-scope="scope">
-                    <el-form label-position="left" inline class="demo-table-expand">
-                        <div class="fl-div">拥有的权限：</div>
-                        <span v-for="item in scope.row.permissions">
-                            <el-tag v-if="item.level === 1" class="fl-el-tag" type="danger">
-                                {{ item.purview_name+'【' + item.name+'】' }}
-                            </el-tag>
-                            <el-tag v-else-if="item.level === 2" class="fl-el-tag" type="warning">
-                                {{ item.purview_name+'【' + item.name+'】' }}
-                            </el-tag>
-                            <el-tag v-else class="fl-el-tag">
-                                {{ item.purview_name+'【' + item.name+'】' }}
-                            </el-tag>
-                        </span>
-                    </el-form>
+                    <el-tag type="danger">
+                        {{ scope.row.name }}
+                    </el-tag>
                 </template>
             </el-table-column>
             <el-table-column
-                    label="角色名"
-                    width="180">
+                label="名称"
+                width="180">
                 <template slot-scope="scope">
-                    <span>{{ scope.row.name }}</span>
+                    <span>{{ scope.row.alias_name }}</span>
                 </template>
             </el-table-column>
             <el-table-column
-                    label="添加时间"
-                    width="180">
+                label="添加时间"
+                width="200">
                 <template slot-scope="scope">
                     <span>{{ scope.row.created_at }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                label="更新时间"
+                width="200">
+                <template slot-scope="scope">
+                    <span>{{ scope.row.updated_at }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button
-                            size="mini"
-                            @click="editRole(scope.$index, scope.row)">编辑
+                        v-if="scope.row.name !== 'administrator'"
+                        size="mini"
+                        @click="operateRole('editTitle', scope.row)">编辑
                     </el-button>
                     <el-button
-                            size="mini"
-                            type="danger"
-                            @click="deleteRole(scope.$index, scope.row)">删除
+                        v-if="scope.row.name !== 'administrator'"
+                        size="mini"
+                        type="danger"
+                        @click="deleteRole(scope.row)">删除
                     </el-button>
                 </template>
             </el-table-column>
@@ -58,104 +62,101 @@
                        :page-size="query.pageSize"
                        :total="total">
         </el-pagination>
-        <el-dialog title="添加角色" :visible.sync="isAdd" width="450px" center v-if="isAdd">
-            <role-form @cancel="isAdd = false" :permisionData="permisionData" @save="doAddRole"/>
-        </el-dialog>
-        <el-dialog title="编辑角色" :visible.sync="isEdit" width="450px" center v-if="isEdit">
-            <role-form @cancel="isEdit = false" :rowData="data" :permisionData="permisionData" @save="doEditRole"/>
+        <el-dialog :title="titleMap[dialogTitle]"
+                   :visible.sync="dialogFormVisible"
+                   v-if="dialogFormVisible"
+                   @cancel="closeAddDialog" width="450px" center>
+            <role-form @cancel="closeAddDialog"
+                       :permisionData="permisionData"
+                       :rowData="currentData"
+                       :dialogTitle="dialogTitle"
+                       @save="doOperateRole"/>
         </el-dialog>
     </page>
 </template>
 <script>
 
-    import RoleForm from './form';
+import RoleForm from './form';
 
-    export default {
-        name: 'list',
-        data() {
-            return {
-                tableData: [],
-                total: 0,
-                query: {
-                    page: 1,
-                    pageSize: 10,
-                },
-                isAdd: false,
-                isEdit: false,
-                data: Object,
-                permisionData: [],
+export default {
+    name: 'list',
+    data() {
+        return {
+            titleMap: {
+                addTitle: "添加角色",
+                editTitle: "编辑角色"
+            },
+            dialogTitle: "",
+            dialogFormVisible: false,
+            currentData: {},
+            query: {
+                page: 1,
+                pageSize: 10,
+            },
+            tableData: [],
+            permisionData: [],
+            total: 0,
+        }
+    },
+    computed: {},
+    methods: {
+        getList() {
+            api.get('admin/roles', this.query).then(data => {
+                this.tableData = data.data.roles;
+                this.permisionData = data.data.permissions;
+                this.total = data.data.total;
+            })
+        },
+        operateRole(title, row) {
+            this.dialogFormVisible = true;
+            this.dialogTitle = title;
+            if (title === 'editTitle') {
+                this.currentData = row;
             }
         },
-        computed: {},
-        methods: {
-            getList() {
-                api.get('admin/roles', this.query).then(data => {
-                    this.tableData = data.data.list;
-                    this.total = data.data.total;
-                })
-            },
-            getPermissions() {
-                api.get('admin/permissions').then(data => {
-                    this.permisionData = data.data;
-                });
-            },
-            addRole() {
-                this.isAdd = true;
-            },
-            doAddRole(form) {
-                api.post('admin/roles/create', form).then(() => {
-                    this.$message.success('添加成功');
-                    this.isAdd = false;
-                    this.getList();
-                })
-            },
-            editRole(index, row) {
-                this.isEdit = true;
-                this.data = {
-                    id: row.id,
-                    name: row.name,
-                    isEdit: true,
-                    checkedKeys: row.checkedKeys,
-                }
-            },
-            doEditRole(form) {
-                api.post('admin/roles/edit', form).then(() => {
-                    this.$message.success('编辑成功');
-                    this.isEdit = false;
-                    this.getList();
-                })
-            },
-            deleteRole(index, row) {
-                this.$confirm('确认要删除该角色吗？', '确认', {
-                    type: 'warning',
-                }).then(() => {
-                    api.post('admin/roles/delete', {
-                        id: row.id
-                    }).then(() => {
-                        this.$message.success('删除成功');
-                        this.getList();
-                    })
-                }).catch(() => {
+        doOperateRole(form, type) {
+            let url, message = '';
+            if (type === 'addTitle') {
+                url = 'admin/roles/create';
+                message = '添加成功';
+            }
 
+            if (type === 'editTitle') {
+                url = 'admin/roles/edit';
+                message = '修改成功';
+            }
+            api.post(url, form).then(() => {
+                this.dialogFormVisible = false;
+                this.$notify.success({'title': '提示', message: message});
+                this.getList();
+            })
+        },
+        closeAddDialog() {
+            this.dialogFormVisible = false;
+        },
+        deleteRole(row) {
+            this.$confirm('确认要删除该角色吗？', '确认', {
+                type: 'warning',
+            }).then(() => {
+                api.post('admin/roles/delete', {
+                    id: row.id
+                }).then(() => {
+                    this.$notify.success({'title': '提示', message: '删除成功'});
+                    this.getList();
                 })
-            },
+            }).catch(() => {
+
+            })
         },
-        created() {
-            this.getList();
-            this.getPermissions();
-        },
-        components: {
-            RoleForm
-        }
+    },
+    created() {
+        this.getList();
+    },
+    components: {
+        RoleForm
     }
+}
 </script>
 <style scoped>
-    .fl-div {
-        color: #99a9bf;
-        line-height: 32px;
-        display: inline-block;
-    }
-    .fl-el-tag {
-        margin: 0 10px 5px 0;
-    }
+
 </style>

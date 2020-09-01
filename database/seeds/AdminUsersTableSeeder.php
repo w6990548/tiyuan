@@ -25,10 +25,10 @@ class AdminUsersTableSeeder extends Seeder
         $user->assignRole(AdminUser::ADMIN);
 
         // 2号用户指定为管理员
-        $user = AdminUser::find(2);
-        $user->username = 'fenglei';
-	    $user->password = Hash::make('123456');
-        $user->save();
-        $user->assignRole('guanliyuan');
+        // $user = AdminUser::find(2);
+        // $user->username = 'fenglei';
+	    // $user->password = Hash::make('123456');
+        // $user->save();
+        // $user->assignRole('admin');
     }
 }

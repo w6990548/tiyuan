@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Exceptions\NoPermissionException;
+use App\Models\AdminUser;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,8 +20,6 @@ class CheckAdminPermissions
      */
     private $apiUrl = [
         'api/admin/logout', // 退出
-        'api/admin/permissions', // 权限列表
-        'api/admin/leftmenu' // 左侧导航
     ];
 
     /**
@@ -35,12 +34,12 @@ class CheckAdminPermissions
         $user = Auth::guard('api')->user();
         if (!in_array($request->path(), $this->apiUrl)) {
             // 用户是否有站长权限
-            // if (!$user->hasRole('zhanzhang')) {
+            if (!$user->hasRole(AdminUser::ADMIN)) {
                 // 用户是否有该权限
                 if (!$user->can($request->path())) {
                     throw new NoPermissionException('权限不足 '.$request->path());
                 }
-            // }
+            }
         }
         return $next($request);
     }

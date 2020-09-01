@@ -1,48 +1,38 @@
 <template>
-    <el-menu class="el-menu-vertical-demo"
-             background-color="#545c64"
-             text-color="#fff"
-             @select="change"
-             active-text-color="#ffd04b"
-             :unique-opened="true"
-             :default-active="defaultActive"
-    >
-        <el-submenu v-for="item in menu" :index="item.name" :key="item.id">
-            <template slot="title">
-                <i class="el-icon-message"></i>{{ item.purview_name }}
-            </template>
-            <el-menu-item
-                    :index="child.name.replace('api/admin', '')"
-                    v-if="item.children.length > 0"
-                    v-for="child in item.children"
-                    :key="child.id">
-                {{ child.purview_name }}
+    <div>
+        <template v-for="item in menuData">
+            <el-submenu :index="item.name" v-if="item.children">
+                <template slot="title">
+                    <icon-svg class="al-icon" :icon-class="item.icon" :size="24"/>
+                    <span slot="title">{{ item.alias_name }}</span>
+                </template>
+                <leftmenu :menuData="item.children"></leftmenu>
+            </el-submenu>
+            <el-menu-item :index="item.url ? item.url.replace('admin', '') : item.url"
+                          :url="item.url ? item.url.replace('admin', '') : item.url" v-else>
+                <icon-svg class="al-icon" :icon-class="item.icon" :size="24"/>
+                <span slot="title">{{ item.alias_name }}</span>
             </el-menu-item>
-        </el-submenu>
-    </el-menu>
+        </template>
+    </div>
 </template>
 
 <script>
     export default {
         props: {
-            menu: {}
+            menuData: {},
         },
         name: "leftmenu",
         data() {
             return {
-                defaultActive: '', // 选中展开的菜单项,
+
             };
         },
         methods: {
-            change(key, query) {
-                if (key !== this.$route.path) {
-                    router.push({path: key, query: query})
-                }
-            },
+
         },
         created() {
-            // 刷新页面展开当前页面导航
-            this.defaultActive = this.$route.path;
+
         },
     }
 </script>

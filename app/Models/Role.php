@@ -2,27 +2,28 @@
 
 namespace App\Models;
 
-use DateTimeInterface;
+use App\Traits\SerializeDate;
 use Spatie\Permission\Models\Role as packageRole;
 
 /**
  * Class Role
  * @package App\Models
  *
+ * @property integer id
  * @property string name
+ * @property string alias_name
  * @property string guard_name
+ * @property string created_at
+ * @property string updated_at
  */
 
 class Role extends packageRole
 {
-    /**
-     * 为数组 / JSON 序列化准备日期。
-     *
-     * @param  \DateTimeInterface  $date
-     * @return string
-     */
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format($this->dateFormat ?: 'Y-m-d H:i:s');
-    }
+    use SerializeDate;
+
+    protected $fillable = ['name', 'alias_name', 'guard_name'];
+
+    // 超级管理员角色
+    const ADMIN = 'administrator';
+    const ADMIN_ID = 1;
 }

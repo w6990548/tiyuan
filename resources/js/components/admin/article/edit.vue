@@ -37,7 +37,7 @@
             },
             doEdit(form) {
                 api.post('admin/articles/edit', form).then(() => {
-                    this.$message.success('编辑成功');
+                    this.$notify.success({'title': '提示', message: '编辑成功'});
                     this.$router.push('/articles');
                 })
             }

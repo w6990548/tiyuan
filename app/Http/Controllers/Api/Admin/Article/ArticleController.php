@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ArticleRequest;
 use App\Models\Article;
 use App\Result;
+use DB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Redis;
 
 class ArticleController extends Controller
@@ -36,22 +36,16 @@ class ArticleController extends Controller
 
         if ($articleIds) {
             $articles = $query->whereIn('id', $articleIds)->get();
-        } else {
-            $articles = $query->skip($request->pageSize * ($request->page - 1))
-                ->take($request->pageSize)
-                ->get();
-
-            if ($articles) {
-                foreach ($articles as $article) {
-                    // 将要给或多个 member 元素及其 score 值加入到有序集 key 中
-                    Redis::zAdd('articles_ids', strtotime($article->created_at), $article->id);
-                }
-            }
+            return Result::success([
+                'list' => $articles,
+                'total' => $total
+            ]);
         }
 
+        $articles = $query->paginate($request->pageSize);
         return Result::success([
-            'list' => $articles,
-            'total' => $total
+            'list' => $articles->items(),
+            'total' => $articles->total()
         ]);
     }
 
@@ -82,17 +76,19 @@ class ArticleController extends Controller
      */
     public function create(ArticleRequest $request, Article $article)
     {
-        $article->title = $request->title;
-        $article->content = $request->content;
-        $article->save();
-        // 保存标签到中间表
-        $article->labels()->sync($request->labels);
+        DB::transaction(function () use ($article, $request) {
+            $article->title = $request->title;
+            $article->content = $request->content;
+            $article->save();
+            // 保存标签到中间表
+            $article->labels()->sync($request->labels);
 
-        // 同步数据到 redis 中
-        Redis::zAdd('articles_ids', strtotime($article->created_at), $article->id);
+            // 同步数据到 redis 中
+            Redis::zAdd('articles_ids', strtotime($article->created_at), $article->id);
+            // 同步数据到 Elasticsearch
+            // $this->dispatch(new SyncOneArticleToES($article, 'create'));
+        });
 
-        // 同步数据到 Elasticsearch
-        // $this->dispatch(new SyncOneArticleToES($article, 'create'));
         return Result::success();
     }
 
@@ -106,12 +102,14 @@ class ArticleController extends Controller
      */
     public function edit(ArticleRequest $request, Article $article)
     {
-        $article = $article->findOrFail($request->id);
-        $article->update($request->all());
-        // 更新标签到中间表
-        $article->labels()->sync($request->labels);
-        // 同步数据到 Elasticsearch
-        // $this->dispatch(new SyncOneArticleToES($article, 'update'));
+        DB::transaction(function () use ($article, $request) {
+            $article = $article->findOrFail($request->id);
+            $article->update($request->all());
+            // 更新标签到中间表
+            $article->labels()->sync($request->labels);
+            // 同步数据到 Elasticsearch
+            // $this->dispatch(new SyncOneArticleToES($article, 'update'));
+        });
         return Result::success();
     }
 
@@ -125,14 +123,16 @@ class ArticleController extends Controller
      */
     public function delete(Request $request)
     {
-        $article = Article::findOrFail($request->id);
-        $article->delete();
+        DB::transaction(function () use ($request) {
+            $article = Article::findOrFail($request->id);
+            $article->delete();
 
-        // 从 redis 中移除该文章
-        Redis::zRem('articles_ids', $article->id);
+            // 从 redis 中移除该文章
+            Redis::zRem('articles_ids', $article->id);
 
-        // 同步数据到 Elasticsearch
-        // $this->dispatch(new SyncOneArticleToES($article, 'delete'));
+            // 同步数据到 Elasticsearch
+            // $this->dispatch(new SyncOneArticleToES($article, 'delete'));
+        });
         return Result::success();
     }
 

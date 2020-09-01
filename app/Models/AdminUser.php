@@ -2,48 +2,56 @@
 
 namespace App\Models;
 
-use DateTimeInterface;
+use App\Traits\SerializeDate;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * Class AdminUser
+ * @package App\Models
+ *
+ * @property integer id
+ * @property string username
+ * @property string password
+ * @property string created_at
+ * @property string updated_at
+ */
+
 class AdminUser extends Authenticatable implements JWTSubject
 {
     use HasRoles;
     use Notifiable;
+    use SerializeDate;
 
     protected $guard_name = 'api';
 
-    const ADMIN = 'zhanzhang';
+    const ADMIN = 'administrator';
+    const ADMIN_ID = 1;
 
     /**
-     * The attributes that are mass assignable.
-     *
+     * 可以被批量赋值的属性。
      * @var array
      */
     protected $fillable = [
         'username', 'password',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password', 'remember_token',
     ];
 
-    /**
-     * 为数组 / JSON 序列化准备日期。
-     *
-     * @param \DateTimeInterface $date
-     * @return string
-     */
-    protected function serializeDate(DateTimeInterface $date)
+    // 是否超级管理员
+    public static function isAdmin($adminUser)
     {
-        return $date->format($this->dateFormat ?: 'Y-m-d H:i:s');
+        return $adminUser->hasRole(self::ADMIN);
+    }
+
+    // 获取管理员
+    public function findById($id)
+    {
+        return AdminUser::findOrFail($id);
     }
 
     public function getJWTIdentifier()

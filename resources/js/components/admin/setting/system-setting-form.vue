@@ -80,7 +80,6 @@
                             _this.ruleForm[key] = data.data[key];
                         }
                     }
-                    this.ruleForm = data.data;
                 })
             },
             // 单图或多图上传验证
@@ -91,7 +90,7 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         api.post('admin/settings/save', this.ruleForm).then(() => {
-                            this.$message.success('保存成功');
+                            this.$notify.success({'title': '提示', message: '保存成功'});
                             this.getSettings();
                         })
                     } else {

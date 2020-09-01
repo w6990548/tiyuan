@@ -2,17 +2,27 @@
 
 namespace App\Http\Controllers\Api\Admin\Auth;
 
+use App\Exceptions\NoPermissionException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\UserRequest;
 use App\Models\AdminUser;
 use App\Models\Role;
 use App\Result;
-use App\Services\Admin\AdminUserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
+    /**
+     * @var AdminUser
+     */
+    private $adminUser;
+
+    public function __construct(AdminUser $adminUser)
+    {
+        $this->adminUser = $adminUser;
+    }
+
     /**
      * 用户列表
      * @author: FengLei
@@ -22,11 +32,11 @@ class UsersController extends Controller
      */
     public function getUsers(Request $request)
     {
-        $adminUsers = AdminUser::with('roles:id,name')
+        $adminUsers = $this->adminUser::with('roles:id,name,alias_name')
             ->paginate($request->pageSize);
 
         // 角色列表（除超级管理员）
-        $roles = Role::where('id', '>', 1)->get(['id', 'name']);
+        $roles = Role::where('id', '>', Role::ADMIN_ID)->get(['id', 'name', 'alias_name']);
         return Result::success([
             'list' => $adminUsers->items(),
             'roles' => $roles,
@@ -43,7 +53,7 @@ class UsersController extends Controller
      */
     public function create(UserRequest $request)
     {
-        $adminUser = AdminUser::create([
+        $adminUser = $this->adminUser::create([
             'username' => $request->username,
             'password' => Hash::make($request->password),
         ]);
@@ -62,10 +72,10 @@ class UsersController extends Controller
      */
     public function edit(UserRequest $request)
     {
-        $adminUser = AdminUserService::findById($request->id);
-        $adminUser->update($request->except(['id', 'role', 'name']));
+        $adminUser = $this->adminUser->findById($request->id);
+        $adminUser->update($request->all());
         // 站长不得更换
-        if (!$adminUser->hasRole(AdminUser::ADMIN)) {
+        if (!AdminUser::isAdmin($adminUser)) {
             // 把该用户所有角色删除，并替换为给定数组的角色
             $adminUser->syncRoles($request->role);
         }
@@ -81,11 +91,11 @@ class UsersController extends Controller
      */
     public function delete(Request $request)
     {
-        $adminUser = AdminUserService::findById($request->id);
-        // 站长禁止删除
-        if (!$adminUser->hasRole(AdminUser::ADMIN)) {
-            $adminUser->delete();
+        $adminUser = $this->adminUser->findById($request->id);
+        if (AdminUser::isAdmin($adminUser)) {
+            throw new NoPermissionException('超级管理员禁止删除');
         }
+        $adminUser->delete();
         return Result::success();
     }
 
@@ -103,16 +113,15 @@ class UsersController extends Controller
             'id' => 'required|integer|min:1',
             'password' => 'required|between:6,18|alpha_dash'
         ]);
-        $adminUser = AdminUserService::findById($request->id);
+        $adminUser = $this->adminUser->findById($request->id);
 
         // 超级管理员只能自己重置密码，别人有权限也不行
-        if (!$request->user()->hasRole(AdminUser::ADMIN) && $request->id == 1) {
-            return Result::error('10000', '你想干什么？');
-        } else {
-            $adminUser->update([
-                'password' => Hash::make($request->password),
-            ]);
-            return Result::success();
+        if (!AdminUser::isAdmin($request->user()) && $request->id == 1) {
+            throw new NoPermissionException();
         }
+        $adminUser->update([
+            'password' => Hash::make($request->password),
+        ]);
+        return Result::success();
     }
 }

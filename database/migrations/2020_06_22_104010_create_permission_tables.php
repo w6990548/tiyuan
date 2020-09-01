@@ -22,11 +22,13 @@ class CreatePermissionTables extends Migration
 
         Schema::create($tableNames['permissions'], function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('purview_name');
-            $table->tinyInteger('level')->default(1);
+            $table->string('name')->comment('唯一标识');
+            $table->string('alias_name', 50)->comment('别名');
+            $table->string('url', 50)->nullable()->comment('权限类型来区分 1为页面地址 2为接口地址');
+            $table->string('icon', 50)->default('al-icon-record')->comment('菜单图标');
+            $table->integer('parent_id')->default(0)->comment('父权限ID');
             $table->string('guard_name');
-            $table->integer('pid')->default(0);
+            $table->tinyInteger('type')->default(1)->index()->comment('权限类型 默认1-菜单 2-api接口 3-页面元素');
             $table->timestamps();
         });
         DB::statement("ALTER TABLE `$tableNames[permissions]` comment '后台权限表'");
@@ -34,6 +36,7 @@ class CreatePermissionTables extends Migration
         Schema::create($tableNames['roles'], function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->string('alias_name', 50);
             $table->string('guard_name');
             $table->timestamps();
         });

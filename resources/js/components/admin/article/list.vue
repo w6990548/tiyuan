@@ -129,7 +129,7 @@
                         if (this.query.page > 1 && this.tableData.length <= 1) {
                             this.query.page--;
                         }
-                        this.$message.success('删除成功');
+                        this.$notify.success({'title': '提示', message: '删除成功'});
                         this.getList();
                     })
                 }).catch(() => {

@@ -21,7 +21,7 @@
         methods: {
             doAdd(form) {
                 api.post('admin/articles/create', form).then(() => {
-                    this.$message.success('发布成功');
+                    this.$notify.success({'title': '提示', message: '发布成功'});
                     this.$router.push('/articles');
                 })
             }

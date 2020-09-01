@@ -29,4 +29,79 @@ class helpers
         $spend_time = number_format($spend_time, 6);
         return $spend_time;
     }
+
+    /**
+     * 获取某个分类的所有子分类
+     * @author: FengLei
+     * @time: 2020/8/25 19:05
+     * @param $data
+     * @param int $parentId
+     * @return array
+     */
+    public static function subClass($data, $parentId = 0)
+    {
+        $subs = [];
+        foreach ($data as $item) {
+            if ($item['parent_id'] == $parentId) {
+                $subs[] = $item;
+                $subs = array_merge($subs, self::subClass($data, $item['id']));
+            }
+        }
+        return $subs;
+    }
+
+    /**
+     * 一维数据数组生成数据树
+     * @author: FengLei
+     * @time: 2020/8/25 19:10
+     * @param array $list 数据列表
+     * @param string $id 主键ID
+     * @param string $pid 父ID
+     * @param string $son 定义子数据Key
+     * @return array
+     */
+    public static function generateTree($list, $id = 'id', $pid = 'parent_id', $son = 'children')
+    {
+        list($tree, $map) = [[], []];
+        foreach ($list as $item) {
+            $map[$item[$id]] = $item;
+        }
+
+        foreach ($list as $item) {
+            if (isset($item[$pid]) && isset($map[$item[$pid]])) {
+                $map[$item[$pid]][$son][] = &$map[$item[$id]];
+            } else {
+                $tree[] = &$map[$item[$id]];
+            }
+        }
+        unset($map);
+        return $tree;
+    }
+
+    /**
+     * 一维数据数组生成数据树（todo 暂时没有用到）
+     * @param array $list 数据列表
+     * @param string $id ID Key
+     * @param string $pid 父ID Key
+     * @param string $path
+     * @param string $ppath
+     * @return array
+     */
+    public static function arr2table(array $list, $id = 'id', $pid = 'pid', $path = 'path', $ppath = '')
+    {
+        $tree = [];
+        foreach (self::generateTree($list, $id, $pid) as $attr) {
+            $attr[$path] = "{$ppath}-{$attr[$id]}";
+            $attr['sub'] = isset($attr['sub']) ? $attr['sub'] : [];
+            $attr['spt'] = substr_count($ppath, '-');
+            $attr['spl'] = str_repeat("　├　", $attr['spt']);
+            $sub = $attr['sub'];
+            unset($attr['sub']);
+            $tree[] = $attr;
+            if (!empty($sub)) {
+                $tree = array_merge($tree, self::arr2table($sub, $id, $pid, $path, $attr[$path]));
+            }
+        }
+        return $tree;
+    }
 }

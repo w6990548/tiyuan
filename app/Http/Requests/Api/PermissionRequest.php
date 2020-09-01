@@ -6,26 +6,42 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class PermissionRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules()
     {
-        return [
-            'purview_name' => 'required|between:2,10',
-            'pid' => 'required|integer|min:0',
-            'name' => 'required|between:5,50',
-        ];
+        switch ($this->route()->uri) {
+            case 'api/admin/permissions/create':
+                return [
+                    'alias_name' => 'required|between:2,10',
+                    'parent_id' => 'required|integer|min:0',
+                    'name' => 'required|between:5,50',
+                    'url' => 'required_if:type,2,3|nullable|between:5,50',
+                    'type' => 'required|in:1,2,3',
+                    'icon' => 'nullable|between:2,50',
+                ];
+                break;
+            case 'api/admin/permissions/edit':
+                return [
+                    'id' => 'required|integer|min:0',
+                    'alias_name' => 'required|between:2,50',
+                    'parent_id' => 'required|integer|min:0|different:id',
+                    'name' => 'required|between:5,50',
+                    'url' => 'required_if:type,2,3|nullable|between:5,50',
+                    'type' => 'required|in:1,2,3',
+                    'icon' => 'nullable|between:2,50',
+                ];
+                break;
+        }
     }
 
     public function attributes()
     {
         return [
-            'purview_name' => '权限名称',
-            'pid' => '父权限',
-            'name' => '权限地址',
+            'name' => '权限标识',
+            'alias_name' => '权限名称',
+            'parent_id' => '父权限id',
+            'url' => '权限地址',
+            'type' => '权限类型',
+            'icon' => '图标',
         ];
     }
 }

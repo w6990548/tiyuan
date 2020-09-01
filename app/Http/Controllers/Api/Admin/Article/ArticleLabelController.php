@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Api\Admin\Article;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ArticleLabelRequest;
-use App\Models\Article;
 use App\Models\ArticleLabel;
 use App\Result;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
 
 class ArticleLabelController extends Controller
 {

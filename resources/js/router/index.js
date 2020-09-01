@@ -22,7 +22,7 @@ import ArticleLabelList from '../components/admin/articleLabel/list';
 
 
 const routes = [
-	{ path: '/', component: login, name: 'login' },
+	{ path: '/login', component: login, name: 'login' },
 	{
 		path: '/',
 		component: Home,
@@ -43,7 +43,6 @@ const routes = [
 			{path: 'users', component: UserList, name: 'UserList'},
 			{path: 'roles', component: RoleList, name: 'RoleList'},
 			{path: 'permissions', component: PermissionList, name: 'PermissionList'},
-
 		]
 	},
 

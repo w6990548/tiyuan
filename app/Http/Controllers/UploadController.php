@@ -25,7 +25,7 @@ class UploadController extends Controller
             'file.mimes' => '图片格式不正确，必须为 jpeg, bmp, png, gif 类型。'
         ]);
         $file = $request->file('file');
-        $path = $file->getRealPath();
+        $path = 'CONFIG-IMG-'.$file->getInode();
 
         if ($file->getSize() > 2 * 1024 * 1024) {
             return Result::error(123, '图片大小不能超过2MB');

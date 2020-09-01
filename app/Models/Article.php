@@ -2,14 +2,29 @@
 
 namespace App\Models;
 
-use DateTimeInterface;
+use App\Traits\SerializeDate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 
+/**
+ * Class Article
+ * @package App\Models
+ *
+ * @property integer id
+ * @property string title
+ * @property string content
+ * @property boolean is_top
+ * @property boolean status
+ * @property string created_at
+ * @property string updated_at
+ * @property string deleted_at
+ */
+
 class Article extends Model
 {
     use SoftDeletes;
+    use SerializeDate;
 
     /**
      * 可以被批量赋值的属性。
@@ -26,17 +41,6 @@ class Article extends Model
         'status' => 'boolean',
     ];
 
-    /**
-     * 为数组 / JSON 序列化准备日期。
-     *
-     * @param  \DateTimeInterface  $date
-     * @return string
-     */
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format($this->dateFormat ?: 'Y-m-d H:i:s');
-    }
-
     // 文章拥有的标签
     public function labels()
     {
@@ -48,6 +52,12 @@ class Article extends Model
         );
     }
 
+    /**
+     * TODO esearch 使用
+     * @author: FengLei
+     * @time: 2020/8/27 10:19
+     * @return array
+     */
     public function toESArray()
     {
         $arr = Arr::only($this->toArray(), [

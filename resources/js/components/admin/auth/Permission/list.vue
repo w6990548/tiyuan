@@ -1,153 +1,179 @@
 <template>
     <page title="权限管理">
         <div class="m-b-20">
-            <el-button type="primary" size="small" @click="addPermissions">添加权限</el-button>
+            <el-button type="primary" size="small" @click="operatePermission('addTitle')">添加权限</el-button>
         </div>
         <el-table
-                :data="tableData"
-                style="width: 100%"
-                row-key="id"
-                border
-                default-expand-all
-                ref="table"
-                :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+            :data="tableData"
+            style="width: 100%"
+            row-key="id"
+            border
+            default-expand-all
+            ref="table"
+            :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
             <el-table-column
-                    prop="purview_name"
-                    label="权限名称"
-                    width="200">
+                prop="alias_name"
+                label="权限名称">
                 <template slot-scope="scope">
-                    <el-tag size="medium" v-if="scope.row.level === 1" type="danger">{{ scope.row.purview_name }}</el-tag>
-                    <el-tag size="medium" v-if="scope.row.level === 2" type="warning">{{ scope.row.purview_name }}</el-tag>
-                    <el-tag size="medium" v-if="scope.row.level === 3">{{ scope.row.purview_name }}</el-tag>
+                    <icon-svg class="al-icon" :icon-class="scope.row.icon" :size="24"/>
+                    <el-tag size="medium" v-if="scope.row.type === 1">{{ scope.row.alias_name }}</el-tag>
+                    <el-tag size="medium" type="danger" v-else-if="scope.row.type === 2">{{ scope.row.alias_name }}</el-tag>
+                    <el-tag size="medium" type="warning" v-else-if="scope.row.type === 3">{{ scope.row.alias_name }}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
-                    prop="name"
-                    label="url"
-                    width="300">
+                prop="name"
+                label="权限标识">
                 <template slot-scope="scope">
-                    <el-tag size="medium" type="info">{{ scope.row.name }}</el-tag>
+                    <el-tag size="medium" type="info" v-if="scope.row.type === 1">{{ scope.row.name }}</el-tag>
+                    <el-tag size="medium" type="danger" v-else-if="scope.row.type === 2">{{ scope.row.name }}</el-tag>
+                    <el-tag size="medium" type="warning" v-else-if="scope.row.type === 3">{{ scope.row.name }}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
-                    prop="created_at"
-                    label="添加时间">
-            </el-table-column>
-            <el-table-column label="操作">
+                prop="type"
+                label="权限类型">
                 <template slot-scope="scope">
-                    <el-button v-if="scope.row.level < 3"
-                            type="primary"
-                            size="mini"
-                            @click="openDialog('isAdd', scope.row)">添加子权限</el-button>
+                    <el-tag size="medium" v-if="scope.row.type === 1">菜单</el-tag>
+                    <el-tag size="medium" type="danger" v-else-if="scope.row.type === 2">API</el-tag>
+                    <el-tag size="medium" type="warning" v-else-if="scope.row.type === 3">页面元素</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column
+                prop="name"
+                label="url">
+                <template slot-scope="scope">
+                    <el-tag size="medium" type="info" v-if="scope.row.url && scope.row.type === 1">{{ scope.row.url }}</el-tag>
+                    <el-tag size="medium" type="danger" v-else-if="scope.row.url && scope.row.type === 2">{{ scope.row.url }}</el-tag>
+                    <el-tag size="medium" type="warning" v-else-if="scope.row.url && scope.row.type === 3">{{ scope.row.url }}</el-tag>
+                    <span v-else>{{ scope.row.url }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                prop="created_at"
+                label="添加时间">
+            </el-table-column>
+            <el-table-column
+                prop="updated_at"
+                label="修改时间">
+            </el-table-column>
+            <el-table-column label="操作" width="280">
+                <template slot-scope="scope">
                     <el-button
-                            size="mini"
-                            @click="openDialog('isEdit', scope.row)">编辑</el-button>
+                        size="mini"
+                        @click="operatePermission('addSubTitle', scope.row)">添加子权限
+                    </el-button>
                     <el-button
-                            size="mini"
-                            type="danger"
-                            @click="deletePermissions(scope.$index, scope.row)">删除</el-button>
+                        size="mini"
+                        @click="operatePermission('editTitle', scope.row)">编辑
+                    </el-button>
+                    <el-button
+                        size="mini"
+                        type="danger"
+                        @click="deletePermissions(scope.row)">删除
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <el-dialog title="添加权限" :visible.sync="isAdd" width="450px" center v-if="isAdd" @close="closeAddDialog">
+        <el-dialog :title="titleMap[dialogTitle]"
+                   :visible.sync="dialogFormVisible"
+                   v-if="dialogFormVisible" width="450px" center @close="closeAddDialog">
             <purview-form
-                    @cancel="closeAddDialog"
-                    @save="doAddPermissions"
-                    :PermissionsData="topPermissionData"
-                    :id="id"
-                    :isAddOrEdit="isAddOrEdit"
-            />
-        </el-dialog>
-        <el-dialog title="编辑权限" :visible.sync="isEdit" width="450px" center v-if="isEdit" @close="closeAddDialog">
-            <purview-form
-                    @cancel="closeAddDialog"
-                    @save="doEditPermissions"
-                    :PermissionsData="topPermissionData"
-                    :id="id"
-                    :isAddOrEdit="isAddOrEdit"
-            />
+                @cancel="closeAddDialog"
+                @save="doOperatePermission"
+                :PermissionsData="topPermissionData"
+                :currentData="currentData"
+                :dialogTitle="dialogTitle"/>
         </el-dialog>
     </page>
 </template>
 <script>
-    import PurviewForm from './form';
+import PurviewForm from './form';
 
-    export default {
-        name: 'list',
-        data(){
-            return {
-                tableData: [],
-                topPermissionData: [],
-                id: 0,
-                isAddOrEdit: '',
-                isAdd: false,
-                isEdit: false,
+export default {
+    name: 'list',
+    data() {
+        return {
+            titleMap: {
+                addTitle: "添加权限",
+                addSubTitle: "添加子权限",
+                editTitle: "编辑权限"
+            },
+            dialogTitle: "",
+            dialogFormVisible: false,
+            tableData: [],
+            topPermissionData: [],
+            currentData: {},
+        }
+    },
+    computed: {},
+    methods: {
+        getList() {
+            api.get('admin/permissions').then(data => {
+                this.tableData = data.data.tree;
+            })
+        },
+        operatePermission(title, row) {
+            this.topPermissionData = deepCopy(this.tableData);
+            this.dialogFormVisible = true;
+            this.dialogTitle = title;
+            if (title === 'addSubTitle' || title === 'editTitle') {
+                this.currentData = row;
             }
         },
-        computed:{
+        doOperatePermission(form, type) {
+            let url, message = '';
+            if (type === 'addTitle' || type === 'addSubTitle') {
+                url = 'admin/permissions/create';
+                message = '添加成功';
+            }
 
+            if (type === 'editTitle') {
+                url = 'admin/permissions/edit';
+                message = '修改成功';
+            }
+            api.post(url, form).then(() => {
+                this.dialogFormVisible = false;
+                this.$notify.success({'title': '提示', message: message});
+                this.getList();
+            })
         },
-        methods: {
-            getList() {
-                api.get('admin/permissions').then(data => {
-                    this.tableData = data.data;
-                    this.topPermissionData = data.data;
-                })
-            },
-            addPermissions() {
-                this.isAddOrEdit = 'isAdd';
-                this.isAdd = true;
-            },
-            doAddPermissions(form) {
-                api.post('admin/permissions/create', form).then(data => {
-                    this.$message.success('添加成功');
-                    this.isAdd = false;
-                    this.getList();
-                })
-            },
-            doEditPermissions(form) {
-                api.post('admin/permissions/edit', form).then(data => {
-                    this.$message.success('修改成功');
-                    this.isEdit = false;
-                    this.getList();
-                })
-            },
-            deletePermissions(index, row) {
-                this.$confirm('确认删除该权限吗?', '提示', {
-                    type: 'warning'
+        deletePermissions(row) {
+            this.$confirm('确认删除该权限吗?', '提示', {
+                type: 'warning'
+            }).then(() => {
+                api.post('admin/permissions/delete', {
+                    id: row.id,
                 }).then(() => {
-                    api.post('admin/permissions/delete', {
-                        id: row.id,
-                    }).then(data => {
-                        this.$message.success('删除成功');
-                        this.getList();
-                    })
-                }).catch(() => {
+                    this.$notify.success({'title': '提示', message: '删除成功'});
+                    this.getList();
+                })
+            }).catch(() => {
 
-                });
-            },
-            openDialog(isAddOrEdit, row) {
-                isAddOrEdit === 'isAdd' ? this.isAdd = true : this.isEdit = true;
-                this.isAddOrEdit = isAddOrEdit;
-                let newData = [];
-                newData.push(row);
-                this.id = row.id;
-                this.topPermissionData = newData;
-            },
-            closeAddDialog() {
-                this.isAdd = false;
-                this.isEdit = false;
-                this.id = 0;
-            },
+            });
         },
-        created(){
-            this.getList();
+        closeAddDialog() {
+            this.dialogFormVisible = false;
         },
-        components: {
-            PurviewForm
-        }
+    },
+    created() {
+        this.getList();
+    },
+    components: {
+        PurviewForm
     }
+}
 </script>
 <style scoped>
-
+    .al-icon {
+        vertical-align: middle;
+        display: inline-block;
+        padding-bottom: 3px;
+    }
+    .icon {
+      width: 1em; height: 1em;
+      vertical-align: -0.15em;
+      fill: currentColor;
+      overflow: hidden;
+    }
 </style>

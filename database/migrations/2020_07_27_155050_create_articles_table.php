@@ -23,6 +23,27 @@ class CreateArticlesTable extends Migration
             $table->softDeletes();
         });
         DB::statement("ALTER TABLE articles COMMENT '文章表'");
+
+        Schema::create('article_labels', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 10)->unique()->comment('标签名称');
+            $table->timestamps();
+        });
+        DB::statement("ALTER TABLE article_labels COMMENT '文章标签表'");
+
+        Schema::create('article_has_labels', function (Blueprint $table) {
+            $table->foreignId('article_id')
+                ->references('id')
+                ->on('articles')
+                ->comment('文章ID');
+            $table->foreignId('label_id')
+                ->references('id')
+                ->on('article_labels')
+                ->comment('标签ID');
+
+            $table->primary(['article_id', 'label_id'], 'article_has_labels_article_id_label_id_primary');
+        });
+        DB::statement("ALTER TABLE article_has_labels COMMENT '文章拥有的标签关联表'");
     }
 
     /**
@@ -32,6 +53,8 @@ class CreateArticlesTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('article_has_labels');
         Schema::dropIfExists('articles');
+        Schema::dropIfExists('article_labels');
     }
 }

@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { Message } from 'element-ui';
+import { Notification } from 'element-ui';
+import NProgress from "nprogress";
 
 window.baseApiUrl = window.baseApiUrl || '';
 class ResponseError {
@@ -65,25 +66,23 @@ function handlerRes(res) {
 
 function handlerError(error) {
 	if (error instanceof ResponseError) {
-		if (error.response && error.response.code) {
-			switch (error.response.code) {
-				case 10003:
-				    if (document.getElementsByClassName('el-message').length === 0) {
-                        Message.error('您的登录信息已失效，请重新登录');
-					    router.push('/');
-                    }
-					break;
-				default:
-					if (!error.response.disableErrorMessage) {
-						Message.error(error.response.message)
-					}
-					break;
-			}
-		} else {
-			Message.error(error.response.message);
-		}
+		if (error.response && error.response.code && document.getElementsByClassName('el-notification').length === 0) {
+
+            switch (error.response.code) {
+                case 10003:
+                    Notification.warning({'title': '身份验证', 'message': error.response.message});
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    router.push('/');
+                    break;
+                default:
+                    Notification.warning({'title': '提示', 'message': error.response.message});
+                    break;
+            }
+            NProgress.done();
+        }
 	} else {
-		Message.error('请求超时，请检查网络')
+        Notification.error({'title': '异常', 'message': '请求超时，请检查网络'});
 	}
 }
 

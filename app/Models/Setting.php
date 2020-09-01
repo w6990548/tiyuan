@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Model;
  * Class Setting
  * @package App\Models
  *
+ * @property integer id
  * @property string key
  * @property string value
- * @method static create(array $array)
+ * @property string created_at
+ * @property string updated_at
  */
 
 class Setting extends Model

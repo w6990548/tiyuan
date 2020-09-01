@@ -25,7 +25,15 @@
 
         <el-container>
             <el-aside>
-                <left-menu :menu="menu"></left-menu>
+                <el-menu class="el-menu-vertical-demo"
+                         background-color="#545c64"
+                         text-color="#fff"
+                         @select="change"
+                         :default-active="defaultActive"
+                         active-text-color="#ffd04b"
+                         :unique-opened="true">
+                    <left-menu :menuData="menus"></left-menu>
+                </el-menu>
             </el-aside>
             <el-container>
                 <el-main class="fl-el-main">
@@ -58,16 +66,21 @@
     export default {
         data() {
             return {
-                menu: [],
+                menus: [],
                 settings: [],
-                centerDialogVisible: false
+                centerDialogVisible: false,
+                defaultActive: '', // 选中展开的菜单项,
             }
         },
         methods: {
             logout() {
                 api.post('admin/logout').then(() => {
                     localStorage.removeItem('token');
-                    this.$message.success('退出成功');
+                    localStorage.removeItem('user');
+                    this.$notify.success({
+                        title: '成功',
+                        message: '退出成功',
+                    });
                     this.$router.push({
                         path: '/'
                     });
@@ -89,10 +102,17 @@
                 }
             },
             getLeftMenu() {
-                api.get('admin/leftmenu').then(data => {
-                    this.menu = data.data.leftmenu;
+                api.get('admin/leftmenus').then(data => {
+                    localStorage.removeItem('leftMenu');
+                    this.menus = data.data.menus;
                     this.settings = data.data.settings;
+                    localStorage.setItem('leftMenu', JSON.stringify(data.data.slugs));
                 })
+            },
+            change(key, query) {
+                if (key !== this.$route.path) {
+                    router.push({path: key, query: query})
+                }
             },
         },
         computed: {
@@ -103,6 +123,8 @@
         },
         created() {
             this.getLeftMenu();
+            // 刷新页面展开当前页面导航
+            this.defaultActive = this.$route.path;
         },
         components: {
             leftMenu

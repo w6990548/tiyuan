@@ -1,5 +1,13 @@
 <template>
-	<div class="flex-center position-ref full-height">
+    <div class="flex-center position-ref" v-if="errorType === 'no authority'">
+        <el-alert
+            title="无权访问"
+            type="error"
+            description="权限不足，无法访问该页面！"
+            show-icon>
+        </el-alert>
+    </div>
+	<div class="flex-center position-ref full-height" v-else>
 		<div class="code">404</div>
 		<div class="message" style="padding: 10px;">页面不存在</div>
 	</div>
@@ -7,7 +15,14 @@
 
 <script>
 	export default {
-
+	    data() {
+	        return {
+                errorType: '404'
+            }
+        },
+        created() {
+	        this.errorType = this.$route.query.errorType ? this.$route.query.errorType : '404';
+        },
 	}
 </script>
 

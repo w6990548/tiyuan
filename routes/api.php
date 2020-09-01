@@ -29,7 +29,7 @@ Route::prefix('admin')
         // 图片验证码
         Route::post('captchas', 'CaptchasController@getCaptchas');
         // 登录后可以访问的接口
-        Route::middleware('auth:api', 'admin')->group(function () {
+        Route::middleware('auth:api')->group(function () {
             // 获取用户信息
             Route::get('user', 'LoginController@user');
             // 退出登录
@@ -69,8 +69,10 @@ Route::prefix('admin')
             Route::post('permissions/delete', 'Auth\PermissionsController@delete');
             // 编辑权限
             Route::post('permissions/edit', 'Auth\PermissionsController@edit');
+
+            /****************************** 菜单管理 ******************************/
             // 左侧导航菜单
-            Route::get('leftmenu', 'Auth\PermissionsController@leftmenu');
+            Route::get('leftmenus', 'Auth\MenusController@getLeftMenu');
 
             /**
              * 系统设置
