@@ -20,6 +20,7 @@ class CheckAdminPermissions
      */
     private $apiUrl = [
         'api/admin/logout', // 退出
+        'api/admin/leftmenus', // 导航菜单
     ];
 
     /**

@@ -140,7 +140,9 @@ router.beforeEach(({name, path}, from, next) => {
         if (leftMenu.includes('admin' + path) || path === '/404') {
             next();
         } else {
-            ElementUI.Notification.warning({title: '权限', message: '无权访问'});
+            setTimeout(() => {
+                ElementUI.Notification.warning({title: '权限', message: '无权访问'});
+            },100);
             next({
                 path: '404',
                 query: {

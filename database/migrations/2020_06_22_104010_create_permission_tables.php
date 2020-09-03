@@ -22,9 +22,9 @@ class CreatePermissionTables extends Migration
 
         Schema::create($tableNames['permissions'], function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->comment('唯一标识');
+            $table->string('name')->comment('权限类型来区分 1为页面地址 2为接口地址');
             $table->string('alias_name', 50)->comment('别名');
-            $table->string('url', 50)->nullable()->comment('权限类型来区分 1为页面地址 2为接口地址');
+            $table->string('slug', 50)->unique()->comment('权限标识');
             $table->string('icon', 50)->default('al-icon-record')->comment('菜单图标');
             $table->integer('parent_id')->default(0)->comment('父权限ID');
             $table->string('guard_name');

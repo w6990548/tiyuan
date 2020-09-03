@@ -15,7 +15,7 @@ class PermissionService
      */
     public static function getPermissionIdsByUser($user)
     {
-        return $user->getPermissionsViaRoles()->pluck('id');
+        return $user->getPermissionsViaRoles()->pluck('id')->toArray();
     }
 
     /**

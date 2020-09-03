@@ -43,7 +43,7 @@ class PermissionsController extends Controller
         $permiss = Permission::create([
             'guard_name' => 'api',
             'name' => $request->name,
-            'url' => $request->url,
+            'slug' => $request->slug,
             'type' => $request->type,
             'alias_name' => $request->alias_name,
             'parent_id' => $request->parent_id,

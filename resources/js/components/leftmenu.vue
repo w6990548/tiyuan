@@ -8,8 +8,8 @@
                 </template>
                 <leftmenu :menuData="item.children"></leftmenu>
             </el-submenu>
-            <el-menu-item :index="item.url ? item.url.replace('admin', '') : item.url"
-                          :url="item.url ? item.url.replace('admin', '') : item.url" v-else>
+            <el-menu-item :index="item.name ? item.name.replace('admin', '') : item.name"
+                          :url="item.name ? item.name.replace('admin', '') : item.name" v-else>
                 <icon-svg class="al-icon" :icon-class="item.icon" :size="24"/>
                 <span slot="title">{{ item.alias_name }}</span>
             </el-menu-item>

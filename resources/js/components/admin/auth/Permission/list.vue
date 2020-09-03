@@ -23,7 +23,7 @@
             </el-table-column>
             <el-table-column
                 prop="name"
-                label="权限标识">
+                label="权限地址">
                 <template slot-scope="scope">
                     <el-tag size="medium" type="info" v-if="scope.row.type === 1">{{ scope.row.name }}</el-tag>
                     <el-tag size="medium" type="danger" v-else-if="scope.row.type === 2">{{ scope.row.name }}</el-tag>
@@ -40,13 +40,13 @@
                 </template>
             </el-table-column>
             <el-table-column
-                prop="name"
-                label="url">
+                prop="slug"
+                label="slug">
                 <template slot-scope="scope">
-                    <el-tag size="medium" type="info" v-if="scope.row.url && scope.row.type === 1">{{ scope.row.url }}</el-tag>
-                    <el-tag size="medium" type="danger" v-else-if="scope.row.url && scope.row.type === 2">{{ scope.row.url }}</el-tag>
-                    <el-tag size="medium" type="warning" v-else-if="scope.row.url && scope.row.type === 3">{{ scope.row.url }}</el-tag>
-                    <span v-else>{{ scope.row.url }}</span>
+                    <el-tag size="medium" type="info" v-if="scope.row.slug && scope.row.type === 1">{{ scope.row.slug }}</el-tag>
+                    <el-tag size="medium" type="danger" v-else-if="scope.row.slug && scope.row.type === 2">{{ scope.row.slug }}</el-tag>
+                    <el-tag size="medium" type="warning" v-else-if="scope.row.slug && scope.row.type === 3">{{ scope.row.slug }}</el-tag>
+                    <span v-else>{{ scope.row.slug }}</span>
                 </template>
             </el-table-column>
             <el-table-column

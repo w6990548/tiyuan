@@ -12,7 +12,7 @@ use Spatie\Permission\Models\Permission as packagePermission;
  * @property integer id
  * @property string name
  * @property string alias_name
- * @property string url
+ * @property string slug
  * @property string icon
  * @property integer type
  * @property integer parent_id
@@ -25,7 +25,7 @@ class Permission extends packagePermission
 {
     use SerializeDate;
 
-	protected $fillable = ['name', 'alias_name', 'url', 'type', 'icon', 'parent_id', 'guard_name'];
+	protected $fillable = ['name', 'alias_name', 'slug', 'type', 'icon', 'parent_id', 'guard_name'];
 
     // 权限类型 默认1-菜单 2-api接口 3-页面元素
     const TYPE_MENU = 1;

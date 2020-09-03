@@ -22,11 +22,21 @@ class MenusController extends Controller
      */
     public function getLeftMenu(Request $request)
     {
+        // 获取系统配置项
+        $settings = SettingService::getValueBuKey('admin_logo', 'icp_code', 'icp_url', 'site_qr_code');
+
         $permissionIds = [];
         // 不是超级管理员
         if (!AdminUser::isAdmin($request->user())) {
             // 获取所有从用户角色继承的权限（菜单权限）ID
             $permissionIds = PermissionService::getPermissionIdsByUser($request->user());
+            if (empty($permissionIds)) {
+                return Result::success([
+                    'settings' => $settings,
+                    'menus' => $permissionIds,
+                    'slugs' => $permissionIds,
+                ]);
+            }
         }
 
         $permission = PermissionService::getAll('*', [
@@ -38,15 +48,12 @@ class MenusController extends Controller
             return $item->type == Permission::TYPE_MENU;
         });
 
-        // 获取系统配置项
-        $settings = SettingService::getValueBuKey('admin_logo', 'icp_code', 'icp_url', 'site_qr_code');
-
         // 获取拥有权限的菜单
         $menus = helpers::generateTree($menus->toArray());
         return Result::success([
             'settings' => $settings,
             'menus' => $menus,
-            'slugs' => $permission->pluck('url')->toArray(),
+            'slugs' => $permission->pluck('name')->toArray(),
         ]);
     }
 }

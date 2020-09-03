@@ -32,7 +32,7 @@ Route::prefix('admin')
         // 图片验证码
         Route::post('captchas', 'CaptchasController@getCaptchas');
         // 登录后可以访问的接口
-        Route::middleware('auth:api')->group(function () {
+        Route::middleware(['auth:api', 'admin'])->group(function () {
             // 获取用户信息
             Route::get('user', 'LoginController@user');
             // 退出登录

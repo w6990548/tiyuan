@@ -5,8 +5,8 @@
                 <el-input v-model="form.alias_name" class="w-300" size="medium" placeholder="请输入权限名称"
                           autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="权限标识" prop="name">
-                <el-input v-model="form.name" class="w-300" size="medium" placeholder="权限标识（menu-xx，api-xx，page-xx）"
+            <el-form-item label="权限地址" prop="name">
+                <el-input v-model="form.name" size="medium" class="w-300" placeholder="请输入权限地址"
                           autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="图标" :inline="true" prop="icon">
@@ -25,14 +25,14 @@
                                 :options="data"></el-tree-select>
             </el-form-item>
             <el-form-item label="权限类型" prop="type" required>
-                <el-radio-group v-model="form.type" @change="changeType">
+                <el-radio-group v-model="form.type">
                     <el-radio :label="1">菜单</el-radio>
                     <el-radio :label="2">API</el-radio>
                     <el-radio :label="3">页面</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item label="权限地址" prop="url" :required="requiredUrl">
-                <el-input v-model="form.url" size="medium" class="w-300" placeholder="请输入权限地址"
+            <el-form-item label="权限标识" prop="slug">
+                <el-input v-model="form.slug" class="w-300" size="medium" placeholder="权限标识（menu-xx，api-xx，page-xx）"
                           autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label-width="0" align="center">
@@ -81,26 +81,12 @@ export default {
         dialogTitle: {type: String, default: ''}
     },
     data() {
-        // 验证权限地址
-        var checkUrl = (rule, value, callback) => {
-            if (this.form.type === 2) {
-                if (!value) {
-                    return callback(new Error('权限地址不能为空'));
-                }
-                if (value.length >= 5 && value.length <= 50) {
-                    callback();
-                } else {
-                    callback(new Error('长度在5-50个字符'));
-                }
-            }
-            callback();
-        };
         return {
             form: {
-                name: '',
+                slug: '',
                 alias_name: '',
                 parent_id: 0,
-                url: '',
+                name: '',
                 type: 1,
                 icon: 'al-icon-record',
             },
@@ -109,24 +95,23 @@ export default {
                 label: 'alias_name',    // 显示名称
                 children: 'children'    // 子级字段名
             },
-            requiredUrl: false,
-            requiredType: [2, 3], // 权限类型必填项
             data: [],
             labelName: '',
             formLabelWidth: '90px',
             iconName: 'al-icon-record',
             rules: {
+                name: [
+                    {required: true, message: '请输入权限地址', trigger: 'blur'},
+                    {min: 5, max: 50, message: '长度在5-50个字符', trigger: 'blur'}
+                ],
                 alias_name: [
                     {required: true, message: '请输入权限名称', trigger: 'blur'},
                     {min: 2, max: 10, message: '长度在2-10个字符', trigger: 'blur'}
                 ],
-                name: [
+                slug: [
                     {required: true, message: '请输入权限标识', trigger: 'blur'},
                     {min: 5, max: 50, message: '长度在5-50个字符', trigger: 'blur'}
                 ],
-                url: [
-                    {validator: checkUrl, trigger: 'blur'},
-                ]
             }
         }
     },
@@ -137,9 +122,6 @@ export default {
         getIcon(value) {
             this.iconName = value;
             this.form.icon = value;
-        },
-        changeType() {
-            this.requiredUrl = this.requiredType.includes(this.form.type);
         },
         initForm() {
             this.data = this.PermissionsData;
@@ -152,15 +134,13 @@ export default {
             if (this.dialogTitle === 'editTitle') {
                 // 编辑权限时去除自己与下级的权限（防止父权限变更到子权限下）
                 call(this.data, this.currentData.id);
-                // 编辑时，type 为 api 或 页面元素，type 为必填项
-                this.requiredUrl = this.requiredType.includes(this.currentData.type);
 
                 this.form = {
                     id: this.currentData.id,
                     name: this.currentData.name,
                     alias_name: this.currentData.alias_name,
                     parent_id: this.currentData.parent_id,
-                    url: this.currentData.url,
+                    slug: this.currentData.slug,
                     type: this.currentData.type,
                     icon: this.currentData.icon,
                 };
