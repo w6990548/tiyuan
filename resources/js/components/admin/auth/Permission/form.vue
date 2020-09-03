@@ -44,8 +44,8 @@
 </template>
 
 <script>
-import ElTreeSelect from "../../../../../assets/components/el-tree-select";
-import ElIconSelect from "../../../../../assets/components/el-icon-select";
+import ElTreeSelect from '../../../../../assets/components/el-tree-select';
+import ElIconSelect from '../../../../../assets/components/el-icon-select';
 
 /**
  * 递归去除本身项
@@ -81,7 +81,7 @@ export default {
         dialogTitle: {type: String, default: ''}
     },
     data() {
-
+        // 验证权限地址
         var checkUrl = (rule, value, callback) => {
             if (this.form.type === 2) {
                 if (!value) {
@@ -95,7 +95,6 @@ export default {
             }
             callback();
         };
-
         return {
             form: {
                 name: '',
@@ -111,6 +110,7 @@ export default {
                 children: 'children'    // 子级字段名
             },
             requiredUrl: false,
+            requiredType: [2, 3], // 权限类型必填项
             data: [],
             labelName: '',
             formLabelWidth: '90px',
@@ -139,7 +139,7 @@ export default {
             this.form.icon = value;
         },
         changeType() {
-            this.requiredUrl = this.form.type === 2 || this.form.type === 3;
+            this.requiredUrl = this.requiredType.includes(this.form.type);
         },
         initForm() {
             this.data = this.PermissionsData;
@@ -152,6 +152,8 @@ export default {
             if (this.dialogTitle === 'editTitle') {
                 // 编辑权限时去除自己与下级的权限（防止父权限变更到子权限下）
                 call(this.data, this.currentData.id);
+                // 编辑时，type 为 api 或 页面元素，type 为必填项
+                this.requiredUrl = this.requiredType.includes(this.currentData.type);
 
                 this.form = {
                     id: this.currentData.id,

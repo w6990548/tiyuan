@@ -1,7 +1,7 @@
 import Home from'../components/home';
 import login from '../components/login.vue';
-import welcome from "../components/welcome.vue";
-import ErrorPage from "../components/404.vue";
+import welcome from '../components/welcome.vue';
+import ErrorPage from '../components/404.vue';
 
 // 权限模块
 import UserList from '../components/admin/auth/user/list';
@@ -20,6 +20,8 @@ import ArticleDetail from '../components/admin/article/detail';
 // 标签模块
 import ArticleLabelList from '../components/admin/articleLabel/list';
 
+// 测试
+import Test from '../components/admin/test'
 
 const routes = [
 	{ path: '/login', component: login, name: 'login' },
@@ -31,9 +33,6 @@ const routes = [
             {path: '404', name: '404', component: ErrorPage},
 		]
 	},
-	// 拦截所有无效页面到404
-	{ path: '*', redirect: '/404' },
-	{ path: '/', redirect: '/login' },
 
 	// 权限模块
 	{
@@ -73,6 +72,15 @@ const routes = [
         component: Home,
         children: [
             {path: 'labels', component: ArticleLabelList, name: 'ArticleLabelList'},
+        ]
+    },
+
+    // 标签模块
+    {
+        path: '/',
+        component: Home,
+        children: [
+            {path: 'test', component: Test, name: 'Test'},
         ]
     },
 

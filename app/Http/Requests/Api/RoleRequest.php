@@ -8,11 +8,23 @@ class RoleRequest extends FormRequest
 {
     public function rules()
     {
-        return [
-            'name' => 'required|between:2,50',
-            'alias_name' => 'required|between:2,15',
-            'keys' => 'array',
-        ];
+        switch ($this->route()->uri) {
+            case 'api/admin/roles/create':
+                return [
+                    'name' => 'required|between:2,50|unique:roles',
+                    'alias_name' => 'required|between:2,15',
+                    'keys' => 'array',
+                ];
+                break;
+            case 'api/admin/roles/edit':
+                return [
+                    'id' => 'required|integer|min:0',
+                    'name' => 'required|between:2,50|unique:roles,name,'.$this->get('id'),
+                    'alias_name' => 'required|between:2,15',
+                    'keys' => 'array',
+                ];
+                break;
+        }
     }
 
     public function attributes()

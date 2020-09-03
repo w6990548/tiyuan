@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+// 测试
+Route::get('/demo', 'DemoController@index');
+
 // 图片上传到七牛云
 Route::post('upload/image', 'UploadController@image');
 
