@@ -7,6 +7,7 @@ import ErrorPage from '../components/404.vue';
 import UserList from '../components/admin/auth/user/list';
 import RoleList from '../components/admin/auth/role/list';
 import PermissionList from '../components/admin/auth/Permission/list';
+import LogList from '../components/admin/auth/log/list';
 
 // 设置模块
 import SystemSettingForm from '../components/admin/setting/system-setting-form';
@@ -42,6 +43,7 @@ const routes = [
 			{path: 'users', component: UserList, name: 'UserList'},
 			{path: 'roles', component: RoleList, name: 'RoleList'},
 			{path: 'permissions', component: PermissionList, name: 'PermissionList'},
+			{path: 'logs', component: LogList, name: 'LogList'},
 		]
 	},
 

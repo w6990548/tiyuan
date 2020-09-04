@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\Admin\AdminLogOperation;
 use App\Http\Middleware\CheckAdminPermissions;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -50,6 +51,11 @@ class Kernel extends HttpKernel
 	    'admin' => [
 		    CheckAdminPermissions::class,
 	    ],
+
+        // admin log
+        'admin_log' => [
+            AdminLogOperation::class,
+        ],
     ];
 
     /**
