@@ -10,6 +10,16 @@ use Illuminate\Support\Str;
 class AdminLogOperation
 {
     /**
+     * 不需要记录的接口
+     * @var string[]
+     */
+    protected $url = [
+        '/api/admin/logs', // 日志列表
+        '/api/admin/logs/delete', // 删除日志
+        '/api/admin/leftmenus', // 左侧导航菜单
+    ];
+
+    /**
      * 操作日志
      * @author: FengLei
      * @time: 2020/9/4 11:54
@@ -19,6 +29,10 @@ class AdminLogOperation
      */
     public function handle($request, Closure $next)
     {
+        if (in_array($request->getPathInfo(), $this->url)) {
+            return $next($request);
+        }
+
         $user = Auth::guard('api')->user();
         $data = [
             'user_id' => $user ? $user->id : 0,
@@ -37,6 +51,11 @@ class AdminLogOperation
         return $next($request);
     }
 
+    /**
+     * 处理密码
+     * @param array $input
+     * @return false|string
+     */
     protected function formatInput(array $input)
     {
         $fields = ['password'];

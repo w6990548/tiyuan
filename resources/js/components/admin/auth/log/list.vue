@@ -1,22 +1,15 @@
 <template>
     <page title="操作日志">
         <el-table :data="tableData" style="width: 100%" border>
-            <el-table-column
-                label="ID"
-                width="180" prop="id">
-            </el-table-column>
-            <el-table-column
-                label="用户名称"
-                width="180">
+            <el-table-column label="ID" width="180" prop="id"/>
+            <el-table-column label="用户名称" width="180">
                 <template slot-scope="scope">
                     <el-tag type="danger" v-if="scope.row.admin_user">
                         {{ scope.row.admin_user.username }}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column
-                label="用户ID"
-                width="180">
+            <el-table-column label="用户ID" width="180">
                 <template slot-scope="scope">
                     <span v-if="scope.row.user_id">
                         {{ scope.row.user_id }}
@@ -24,9 +17,7 @@
                     <span v-else></span>
                 </template>
             </el-table-column>
-            <el-table-column
-                label="请求方法"
-                width="180">
+            <el-table-column label="请求方法" width="180">
                 <template slot-scope="scope">
                     <el-tag type="warning" v-if="scope.row.method === 'POST'">
                         {{ scope.row.method }}
@@ -37,30 +28,36 @@
                     <span v-else>{{ scope.row.method }}</span>
                 </template>
             </el-table-column>
-            <el-table-column
-                label="请求地址">
+            <el-table-column label="请求地址">
                 <template slot-scope="scope">
                     <el-tag type="info">
                         {{ scope.row.path }}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column
-                label="IP">
+            <el-table-column label="IP">
                 <template slot-scope="scope">
                     <el-tag type="info">
                         {{ scope.row.ip }}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column
-                label="添加时间"
-                width="200">
+            <el-table-column label="输入">
+                <template slot-scope="scope">
+                    <el-tooltip class="item" v-if="scope.row.input.length > 2" effect="dark" placement="top">
+                        <div slot="content">
+                            <pre>{{ JSON.parse(scope.row.input) }}</pre>
+                        </div>
+                        <el-tag type="info">查看</el-tag>
+                    </el-tooltip>
+                </template>
+            </el-table-column>
+            <el-table-column label="添加时间" width="200">
                 <template slot-scope="scope">
                     <span>{{ scope.row.created_at }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width="80">
                 <template slot-scope="scope">
                     <el-button
                         size="mini"
