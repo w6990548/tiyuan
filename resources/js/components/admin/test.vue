@@ -10,7 +10,7 @@ export default {
     },
     methods: {
         test() {
-            api.post('demo').then(res => {
+            api.get('demo').then(res => {
                 console.log(2222, res);
             }).catch(error => {
                 console.log(11111, error);

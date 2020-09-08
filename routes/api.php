@@ -33,8 +33,6 @@ Route::prefix('admin')
         Route::post('captchas', 'CaptchasController@getCaptchas');
         // 登录后可以访问的接口
         Route::middleware(['auth:api', 'admin', 'admin_log'])->group(function () {
-            // 获取用户信息
-            Route::get('user', 'LoginController@user');
             // 退出登录
             Route::post('logout', 'LoginController@logout');
 

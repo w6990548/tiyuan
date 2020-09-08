@@ -49,11 +49,6 @@ class LoginController extends Controller
         ]);
     }
 
-    public function user(Request $request)
-    {
-        return Result::success($request->user());
-    }
-
     public function logout(Request $request)
     {
         auth('api')->logout();
