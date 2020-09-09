@@ -6,7 +6,6 @@
         <el-table
                 :data="tableData"
                 style="width: 100%"
-                border
                 ref="table">
             <el-table-column
                     prop="id"

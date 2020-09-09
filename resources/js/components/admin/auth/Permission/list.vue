@@ -7,7 +7,6 @@
             :data="tableData"
             style="width: 100%"
             row-key="id"
-            border
             default-expand-all
             ref="table"
             :tree-props="{children: 'children', hasChildren: 'hasChildren'}">

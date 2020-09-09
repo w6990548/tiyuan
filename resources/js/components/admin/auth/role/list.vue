@@ -3,7 +3,7 @@
         <div class="m-b-20">
             <el-button type="primary" size="small" @click="operateRole('addTitle')">添加角色</el-button>
         </div>
-        <el-table :data="tableData" style="width: 100%" border>
+        <el-table :data="tableData" style="width: 100%">
             <el-table-column
                 label="ID"
                 width="180" prop="id">

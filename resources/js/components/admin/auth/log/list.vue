@@ -1,6 +1,6 @@
 <template>
     <page title="操作日志">
-        <el-table :data="tableData" style="width: 100%" border>
+        <el-table :data="tableData" style="width: 100%">
             <el-table-column label="ID" width="180" prop="id"/>
             <el-table-column label="用户名称" width="180">
                 <template slot-scope="scope">
