@@ -32,18 +32,18 @@ class AppServiceProvider extends ServiceProvider
         // 开启数据库操作记录
         DB::enableQueryLog();
         // 非生产环境 记录数据库操作日志
-        if(!app()->environment('production')){
+        if (!app()->environment('production')) {
             DB::listen(function ($query) {
                 Log::channel('query')->debug('sql listen', [
                     'sql' => $query->sql,
                     'bindings' => $query->bindings,
-                    'time' => $query->time.'ms',
+                    'time' => $query->time . 'ms',
                 ]);
             });
         }
 
         // 注册一个名为 es 的单例
-        $this->app->singleton('es', function () {
+        /*$this->app->singleton('es', function () {
             // 从配置文件读取 Elasticsearch 服务器列表
             $builder = ESClientBuilder::create()->setHosts(config('database.elasticsearch.hosts'));
             // 如果是开发环境
@@ -52,6 +52,6 @@ class AppServiceProvider extends ServiceProvider
                 $builder->setLogger(app('log')->driver());
             }
             return $builder->build();
-        });
+        });*/
     }
 }

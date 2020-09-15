@@ -37,7 +37,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['daily'],
             'ignore_exceptions' => false,
         ],
 
@@ -105,7 +105,7 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/request.log'),
             'level' => 'debug',
-            'days' => 15,
+            'days' => 14,
         ],
 
         // mysql查询日志
@@ -113,6 +113,14 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/query.log'),
             'level' => 'debug',
+        ],
+
+        // 错误日志
+        'error-daily' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/error.log'),
+            'level' => 'error',
+            'days' => 300,
         ],
     ],
 
