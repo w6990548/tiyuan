@@ -77,8 +77,8 @@ class ArticleController extends Controller
     public function create(ArticleRequest $request, Article $article)
     {
         DB::transaction(function () use ($article, $request) {
-            $article->title = $request->title;
-            $article->content = $request->content;
+            $article->title = $request->get('title');
+            $article->content = $request->get('content');
             $article->save();
             // 保存标签到中间表
             $article->labels()->sync($request->labels);
@@ -89,7 +89,7 @@ class ArticleController extends Controller
             // $this->dispatch(new SyncOneArticleToES($article, 'create'));
         });
 
-        return Result::success();
+        return Result::success($article);
     }
 
     /**
@@ -149,6 +149,6 @@ class ArticleController extends Controller
         $article->update($request->all());
         // 同步数据到 Elasticsearch
         // $this->dispatch(new SyncOneArticleToES($article, 'update'));
-        return Result::success();
+        return Result::success($article);
     }
 }
