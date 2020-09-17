@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\AdminUser;
 use App\Models\Article;
+use Illuminate\Support\Facades\Redis;
 use Tests\TestCase;
 use Tests\Traits\ActingJWTUser;
 
@@ -137,6 +138,9 @@ class ArticleApiTest extends TestCase
      */
     protected function makeArticle()
     {
-        return factory(Article::class)->create();
+        $article = factory(Article::class)->create();
+        // 同步数据到 redis 中
+        Redis::zAdd('articles_ids', strtotime($article->created_at), $article->id);
+        return $article;
     }
 }
