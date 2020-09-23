@@ -99,13 +99,17 @@ class ArticleApiTest extends TestCase
 
         $response = $this->JWTActingAs($this->user)
             ->json('POST', 'api/admin/articles/delete', ['id' => $article->id]);
-        $response->assertStatus(200);
+        $response->assertStatus(200)
+            ->assertJsonFragment([
+            'code' => 0
+            ]);
 
         // 重新请求详情，出现 10010 即可
         $response = $this->json('GET', 'api/admin/articles/detail', ['id' => $article->id]);
-        $response->assertStatus(200)->assertJsonFragment([
-            'code' => 10010
-        ]);
+        $response->assertStatus(200)
+            ->assertJsonFragment([
+                'code' => 10010
+            ]);
     }
 
     /**

@@ -32,11 +32,11 @@ class helpers
 
     /**
      * 获取某个分类的所有子分类
-     * @author: FengLei
-     * @time: 2020/8/25 19:05
      * @param $data
      * @param int $parentId
      * @return array
+     * @author: FengLei
+     * @time: 2020/8/25 19:05
      */
     public static function subClass($data, $parentId = 0)
     {
@@ -52,13 +52,13 @@ class helpers
 
     /**
      * 一维数据数组生成数据树
-     * @author: FengLei
-     * @time: 2020/8/25 19:10
      * @param array $list 数据列表
      * @param string $id 主键ID
      * @param string $pid 父ID
      * @param string $son 定义子数据Key
      * @return array
+     * @author: FengLei
+     * @time: 2020/8/25 19:10
      */
     public static function generateTree($list, $id = 'id', $pid = 'parent_id', $son = 'children')
     {
@@ -103,5 +103,18 @@ class helpers
             }
         }
         return $tree;
+    }
+
+    /**
+     * 获取随机六位字符串（字母+数字）
+     * Created by FengLei on 2020/9/23 15:04
+     * @param $start
+     * @param $length
+     * @return false|string
+     */
+    public static function getRandomString($start, $length)
+    {
+        $randStr = str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890');
+        return substr($randStr, $start, $length);
     }
 }

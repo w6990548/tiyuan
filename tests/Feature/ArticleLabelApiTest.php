@@ -54,7 +54,10 @@ class ArticleLabelApiTest extends TestCase
 
         $response = $this->JWTActingAs($this->user)
             ->json('POST', 'api/admin/labels/delete', ['id' => $articleLabel->id]);
-        $response->assertStatus(200);
+        $response->assertStatus(200)
+            ->assertJsonFragment([
+                'code' => 0
+            ]);
 
         $response = ArticleLabel::find($articleLabel->id);
         if ($response !== null) {
