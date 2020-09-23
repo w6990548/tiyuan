@@ -52,7 +52,7 @@ function getRealUrl(url) {
 }
 
 function handlerRes(res) {
-    if (res && res.code === 0) {
+    if (res && res.code === 200) {
         return res;
     } else {
         return Promise.reject(new ResponseError(res));
@@ -63,7 +63,7 @@ function handlerError(error) {
     if (error instanceof ResponseError) {
         if (error.response && error.response.code && document.getElementsByClassName('el-notification').length === 0) {
             Notification.warning({'title': '提示', 'message': error.response.message});
-            if (error.response.code === 10003) {
+            if (error.response.code === 2000) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
                 router.push('/');

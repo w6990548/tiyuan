@@ -82,11 +82,8 @@ class ArticleController extends Controller
             $article->save();
             // 保存标签到中间表
             $article->labels()->sync($request->labels);
-
             // 同步数据到 redis 中
             Redis::zAdd('articles_ids', strtotime($article->created_at), $article->id);
-            // 同步数据到 Elasticsearch
-            // $this->dispatch(new SyncOneArticleToES($article, 'create'));
         });
 
         return Result::success($article);
@@ -107,8 +104,6 @@ class ArticleController extends Controller
             $article->update($request->all());
             // 更新标签到中间表
             $article->labels()->sync($request->labels);
-            // 同步数据到 Elasticsearch
-            // $this->dispatch(new SyncOneArticleToES($article, 'update'));
         });
         return Result::success();
     }
@@ -126,12 +121,8 @@ class ArticleController extends Controller
         DB::transaction(function () use ($request) {
             $article = Article::findOrFail($request->id);
             $article->delete();
-
             // 从 redis 中移除该文章
             Redis::zRem('articles_ids', $article->id);
-
-            // 同步数据到 Elasticsearch
-            // $this->dispatch(new SyncOneArticleToES($article, 'delete'));
         });
         return Result::success();
     }
@@ -147,8 +138,6 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($request->id);
         $article->update($request->all());
-        // 同步数据到 Elasticsearch
-        // $this->dispatch(new SyncOneArticleToES($article, 'update'));
         return Result::success($article);
     }
 }

@@ -2,12 +2,12 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use App\ResultCode;
 
 class DataNotFoundException extends BaseResponseException
 {
     public function __construct($message = "数据不存在")
     {
-        parent::__construct($message, 10010);
+        parent::__construct($message, ResultCode::DB_QUERY_FAIL);
     }
 }

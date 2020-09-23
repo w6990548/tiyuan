@@ -54,7 +54,7 @@ export default {
             this.$refs[form].validate((valid) => {
                 if (valid) {
                     api.get('admin/login', this.form).then(data => {
-                        if (data.code === 0) {
+                        if (data.code === 200) {
                             localStorage.setItem('token', 'Bearer' + data.data.token);
                             localStorage.setItem('user', JSON.stringify(data.data.user_info));
                             this.$notify.success({
@@ -73,7 +73,7 @@ export default {
         },
         captcha() {
             api.post('admin/captchas', this.form).then(data => {
-                if (data.code === 0) {
+                if (data.code === 200) {
                     this.src = data.data.captcha_image;
                     this.form.captcha_key = data.data.captcha_key
                 }

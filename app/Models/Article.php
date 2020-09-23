@@ -51,28 +51,4 @@ class Article extends Model
             'label_id'
         );
     }
-
-    /**
-     * TODO esearch 使用
-     * @author: FengLei
-     * @time: 2020/8/27 10:19
-     * @return array
-     */
-    public function toESArray()
-    {
-        $arr = Arr::only($this->toArray(), [
-            'id',
-            'title',
-            'content',
-            'is_top',
-            'status',
-            'created_at'
-        ]);
-
-        $arr['labels'] = $this->labels->map(function (ArticleLabel $articleLabel) {
-            return Arr::only($articleLabel->toArray(), ['id', 'name']);
-        });
-
-        return $arr;
-    }
 }

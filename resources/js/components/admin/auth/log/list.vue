@@ -17,7 +17,7 @@
                     <span v-else></span>
                 </template>
             </el-table-column>
-            <el-table-column label="请求方法" width="180">
+            <el-table-column label="请求方法">
                 <template slot-scope="scope">
                     <el-tag type="warning" v-if="scope.row.method === 'POST'">
                         {{ scope.row.method }}
@@ -28,7 +28,7 @@
                     <span v-else>{{ scope.row.method }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="请求地址">
+            <el-table-column label="请求地址" width="300">
                 <template slot-scope="scope">
                     <el-tag type="info">
                         {{ scope.row.path }}

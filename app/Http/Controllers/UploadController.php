@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Result;
+use App\ResultCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -28,7 +29,7 @@ class UploadController extends Controller
         $path = 'CONFIG-IMG-'.$file->getInode();
 
         if ($file->getSize() > 2 * 1024 * 1024) {
-            return Result::error(123, '图片大小不能超过2MB');
+            return Result::error(ResultCode::IMG_SIZE_ILLEGAL, '图片大小不能超过2MB');
         }
         $disk = Storage::disk('qiniu');
 

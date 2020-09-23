@@ -4,7 +4,6 @@
 
 use App\Models\AdminUser;
 use Faker\Generator as Faker;
-use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------

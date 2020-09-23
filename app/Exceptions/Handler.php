@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Result;
+use App\ResultCode;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -80,25 +81,25 @@ class Handler extends ExceptionHandler
     private function renderForApi($request, Throwable $exception)
     {
         if ($exception instanceof NotFoundHttpException) {
-            $response = Result::error(10000, '接口不存在');
+            $response = Result::error(ResultCode::API_NOT_FOUND, '接口不存在');
         } elseif ($exception instanceof MethodNotAllowedHttpException) {
-            $response = Result::error(500, '不允许的请求方法');
+            $response = Result::error(ResultCode::METHOD_WRONG, '不允许的请求方法');
         } elseif ($exception instanceof ValidationException) {
             $errors = array_map(function (&$value) {
                 return implode('|', $value);
             }, $exception->errors());
-            $response = Result::error(10001, implode('|', $errors));
+            $response = Result::error(ResultCode::PARAMS_INVALID, implode('|', $errors));
         } elseif ($exception instanceof AuthenticationException) {
-            $response = Result::error(10003, '您尚未登录');
+            $response = Result::error(ResultCode::UN_LOGIN, '您尚未登录');
         } elseif ($exception instanceof PermissionAlreadyExists) {
-            $response = Result::error(10004, '权限已存在');
+            $response = Result::error(ResultCode::PERMISSION_EXISTS, '权限已存在');
         } elseif ($exception instanceof RoleAlreadyExists) {
-	        $response = Result::error(10006, '角色已存在');
+	        $response = Result::error(ResultCode::ROLE_EXISTS, '角色已存在');
         } elseif ($exception instanceof ModelNotFoundException) {
 	        $message = '数据不存在：'.$exception->getModel().'【'.implode(',', $exception->getIds()).'】';
-	        $response = Result::error(10010, $message);
+	        $response = Result::error(ResultCode::DB_QUERY_FAIL, $message);
         } elseif ($exception instanceof ThrottleRequestsException) {
-	        $response = Result::error(10010, '请求频繁，请稍后再试！');
+	        $response = Result::error(ResultCode::FREQUENT_REQUESTS, '请求频繁，请稍后再试！');
         } else {
             $response = parent::render($request, $exception);
         }

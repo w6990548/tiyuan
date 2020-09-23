@@ -20,7 +20,7 @@ class Result
 
         $response = [
             'spend_time' => helpers::spend_time(),
-            'code' => 0,
+            'code' => ResultCode::SUCCESS,
             'message' => $message,
             'data' => $data,
             'timestamp' => time(),

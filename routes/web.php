@@ -19,5 +19,3 @@ Route::get('/', function () {
 
 // 后端页面
 Route::view('/admin', 'admin');
-
-// Route::get('/{any}', 'SpaController@index')->where('any', '.*');

@@ -19,7 +19,7 @@ class SettingController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAll(Request $request)
+    public function getAll()
     {
         $settings = SettingService::getAll();
         return Result::success($settings);
