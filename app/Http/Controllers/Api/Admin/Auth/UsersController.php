@@ -60,7 +60,7 @@ class UsersController extends Controller
 
         // 添加角色
         $adminUser->assignRole($request->role);
-        return Result::success();
+        return Result::success($adminUser);
     }
 
     /**
