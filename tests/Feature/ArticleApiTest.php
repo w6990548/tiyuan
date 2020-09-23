@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\AdminUser;
 use App\Models\Article;
+use App\Models\Role;
 use Illuminate\Support\Facades\Redis;
 use Tests\TestCase;
 use Tests\Traits\ActingJWTUser;
@@ -26,7 +27,7 @@ class ArticleApiTest extends TestCase
         $this->user = factory(AdminUser::class)->create();
 
         // 添加角色
-        $this->user->assignRole(1);
+        $this->user->assignRole(Role::ADMIN_ID);
     }
 
     /**
