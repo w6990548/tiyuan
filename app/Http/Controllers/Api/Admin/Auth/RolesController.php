@@ -64,7 +64,7 @@ class RolesController extends Controller
             $role->syncPermissions($permissionData);
         }
         // 添加权限
-        return Result::success();
+        return Result::success($role);
     }
 
     /**
