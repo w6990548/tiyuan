@@ -103,7 +103,7 @@
             },
             // 已验证完整
             handleUploadSuccess(res, file, fileList) {
-                if (res && res.code === 0) {
+                if (res && res.code === 200) {
                     this.fileList = fileList;
                     this.emitInput();
                 } else {

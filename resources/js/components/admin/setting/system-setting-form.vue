@@ -37,7 +37,7 @@
 
 <script>
 
-    import ImageUpload from "../../../../assets/components/image-upload";
+    import ImageUpload from '../../../../assets/components/image-upload';
     import VmdEditor from '../../../../assets/components/vmd-editor';
 
     export default {
